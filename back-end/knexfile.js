@@ -4,12 +4,18 @@
  * You will not need to make changes to this file.
  */
 
-require('dotenv').config();
+require("dotenv").config();
 const path = require("path");
 
 const {
   DATABASE_URL = "postgresql://postgres@localhost/postgres",
-  DATABASE_URL_DEVELOPMENT = "postgresql://postgres@localhost/postgres",
+  DATABASE_URL_DEVELOPMENT = {
+    host: "127.0.0.1",
+    port: 5432,
+    user: "postgres",
+    password: "postgres",
+    database: "restaurant-reservation-tool-db-dev",
+  },
   DATABASE_URL_TEST = "postgresql://postgres@localhost/postgres",
   DATABASE_URL_PREVIEW = "postgresql://postgres@localhost/postgres",
   DEBUG,

@@ -32,3 +32,15 @@ function Routes() {
 }
 
 export default Routes;
+
+//  Routing scheme
+//  /dashboard  ("/" redirects here)
+//  /search
+//  /reservations
+//  /reservations/new
+//  /reservations/:reservation_id/edit
+//  /reservations/:reservation_id/status
+//  /reservations/:reservation_id/seat
+//  /tables
+//  /tables/new
+//  /tables/:table_id/seat
