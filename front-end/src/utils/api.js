@@ -67,3 +67,11 @@ export async function listReservations(params, signal) {
     .then(formatReservationDate)
     .then(formatReservationTime);
 }
+
+/**
+ * Sends data representing new reservation to be stored by API in database.
+ * @returns
+ *
+ */
+
+export async function createReservation(params, signal) {}
