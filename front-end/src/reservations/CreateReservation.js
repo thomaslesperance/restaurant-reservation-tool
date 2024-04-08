@@ -31,12 +31,10 @@ function CreateReservation() {
   //Calls API with createReservation() and catches any returned error to use in <ErrorAlert />
   async function submitHandler(event) {
     event.preventDefault();
-    const abortController = new AbortController();
     setCreateReservationError(null);
-    createReservation({ formData }, abortController.signal)
+    createReservation(formData)
       .then(() => history.push("/dashboard"))
       .catch(setCreateReservationError);
-    return () => abortController.abort();
   }
 
   //Return JSX containing breadcrumb and form elements
