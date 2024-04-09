@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { listReservations } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
+import Reservation from "../reservations/Reservation";
 
 /**
  * Defines the dashboard page.
@@ -9,6 +10,7 @@ import ErrorAlert from "../layout/ErrorAlert";
  * @returns {JSX.Element}
  */
 function Dashboard({ date }) {
+  //  reservations will be of type array based on knex api result of .select()
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
 
@@ -23,19 +25,28 @@ function Dashboard({ date }) {
     return () => abortController.abort();
   }
 
+  const reservationDisplays = reservations.map((reservation) => {
+    return <Reservation data={reservation} />;
+  });
+
   return (
     <main>
       <h1>Dashboard</h1>
-      <div className="row mb-4">
-        <ol class="breadcrumb border" style={{ width: "90%" }}>
-          <li class="breadcrumb-item active">Dashboard ></li>
+
+      <div className="row mx-1 my-1">
+        <ol className="breadcrumb border" style={{ width: "100%" }}>
+          <li className="breadcrumb-item active">Dashboard</li>
         </ol>
       </div>
-      <div className="d-md-flex mb-3">
-        <h4 className="mb-0">Reservations for {date}:</h4>
+
+      <div className="row mx-1 my-1">
+        <h4>Reservations for {date}:</h4>
       </div>
-      <ErrorAlert error={reservationsError} />
-      {JSON.stringify(reservations)}
+
+      <ErrorAlert className="row mx-1 my-1" error={reservationsError} />
+
+      {/* {JSON.stringify(reservations)} */}
+      <section>{reservationDisplays}</section>
     </main>
   );
 }
