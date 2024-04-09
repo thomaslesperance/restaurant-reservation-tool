@@ -11,6 +11,7 @@ function CreateReservation() {
     mobile_number: "",
     reservation_date: "",
     reservation_time: "",
+    people: "",
   };
 
   //Initialize state and history
@@ -42,8 +43,8 @@ function CreateReservation() {
     <main>
       <h1>New Reservation</h1>
 
-      <div className="row mb-4">
-        <ol class="breadcrumb border" style={{ width: "90%" }}>
+      <div className="row mx-1 my-1">
+        <ol class="breadcrumb border" style={{ width: "100%" }}>
           <li class="breadcrumb-item">
             <Link to="/">Dashboard</Link>
           </li>
@@ -51,92 +52,103 @@ function CreateReservation() {
         </ol>
       </div>
 
-      <ErrorAlert error={createReservationError} />
+      <ErrorAlert className="row mx-1 my-1" error={createReservationError} />
 
-      <div className="row">
-        <div className="card" style={{ width: "90%" }}>
-          <div className="card-body">
-            <form onSubmit={submitHandler}>
-              <label for="first_name" className="formLabel">
-                First Name
-              </label>
-              <input
-                type="text"
-                className="form-control mb-2"
-                id="first_name"
-                name="first_name"
-                placeHolder="First name"
-                onChange={handleChange}
-                value={formData.first_name}
-              ></input>
+      <article className="card row mx-1 my-1">
+        <div className="card-body">
+          <form onSubmit={submitHandler}>
+            <label for="first_name" className="formLabel">
+              <h5>First Name</h5>
+            </label>
+            <input
+              type="text"
+              className="form-control mb-2"
+              id="first_name"
+              name="first_name"
+              placeHolder="First name"
+              onChange={handleChange}
+              value={formData.first_name}
+            ></input>
 
-              <label for="last_name" className="formLabel">
-                Last Name
-              </label>
-              <input
-                type="text"
-                className="form-control mb-2"
-                id="last_name"
-                name="last_name"
-                placeHolder="Last name"
-                onChange={handleChange}
-                value={formData.last_name}
-              ></input>
+            <label for="last_name" className="formLabel">
+              <h5>Last Name</h5>
+            </label>
+            <input
+              type="text"
+              className="form-control mb-2"
+              id="last_name"
+              name="last_name"
+              placeHolder="Last name"
+              onChange={handleChange}
+              value={formData.last_name}
+            ></input>
 
-              <label for="mobile_number" className="formLabel">
-                Mobile Number
-              </label>
-              <input
-                type="text"
-                className="form-control mb-2"
-                id="mobile_number"
-                name="mobile_number"
-                placeHolder="(XXX) XXX-XXXX"
-                onChange={handleChange}
-                value={formData.mobile_number}
-              ></input>
+            <label for="mobile_number" className="formLabel">
+              <h5>Mobile Number</h5>
+            </label>
+            <input
+              type="text"
+              className="form-control mb-2"
+              id="mobile_number"
+              name="mobile_number"
+              placeHolder="(XXX) XXX-XXXX"
+              onChange={handleChange}
+              value={formData.mobile_number}
+            ></input>
 
-              <label for="reservation_date" className="formLabel">
-                Reservation Date
-              </label>
-              <input
-                type="text"
-                className="form-control mb-2"
-                id="reservation_date"
-                name="reservation_date"
-                placeHolder="XX-XX-XXXX"
-                onChange={handleChange}
-                value={formData.reservation_date}
-              ></input>
+            <label for="reservation_date" className="formLabel">
+              <h5>Reservation Date</h5>
+            </label>
+            <input
+              type="text"
+              className="form-control mb-2"
+              id="reservation_date"
+              name="reservation_date"
+              placeHolder="XX-XX-XXXX"
+              onChange={handleChange}
+              value={formData.reservation_date}
+            ></input>
 
-              <label for="reservation_time" className="formLabel">
-                Reservation Time
-              </label>
-              <input
-                type="text"
-                className="form-control mb-2"
-                id="reservation_time"
-                name="reservation_time"
-                placeHolder="XX:XX AM/PM"
-                onChange={handleChange}
-                value={formData.reservation_time}
-              ></input>
+            <label for="reservation_time" className="formLabel">
+              <h5>Reservation Time</h5>
+            </label>
+            <input
+              type="text"
+              className="form-control mb-2"
+              id="reservation_time"
+              name="reservation_time"
+              placeHolder="XX:XX AM/PM"
+              onChange={handleChange}
+              value={formData.reservation_time}
+            ></input>
 
-              <button
-                type="button"
-                className="btn btn-secondary mr-3"
-                onClick={() => history.push("/")}
-              >
-                Cancel
-              </button>
+            <label for="people" className="formLabel">
+              <h5>Party Size</h5>
+            </label>
+            <input
+              type="text"
+              className="form-control mb-2"
+              id="people"
+              name="people"
+              placeHolder="XX"
+              onChange={handleChange}
+              value={formData.people}
+            ></input>
 
-              <button type="submit" className="btn btn-primary">
-                Submit
-              </button>
-            </form>
-          </div>
+            <button type="submit" className="btn btn-primary mr-1">
+              Submit
+            </button>
+
+            <button
+              type="button"
+              className="btn btn-secondary mr-1"
+              onClick={() => history.push("/")}
+            >
+              Cancel
+            </button>
+          </form>
         </div>
-      </div>
+      </article>
     </main>
   );
 }
