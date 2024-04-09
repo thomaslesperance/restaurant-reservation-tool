@@ -9,7 +9,7 @@ import Reservation from "../reservations/Reservation";
  *  the date for which the user wants to view reservations.
  * @returns {JSX.Element}
  */
-function Dashboard({ date }) {
+function Dashboard({ date, today }) {
   //  reservations will be of type array based on knex api result of .select()
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
@@ -26,7 +26,7 @@ function Dashboard({ date }) {
   }
 
   const reservationDisplays = reservations.map((reservation) => {
-    return <Reservation data={reservation} />;
+    return <Reservation key={reservation.reservation_id} data={reservation} />;
   });
 
   return (
@@ -40,7 +40,7 @@ function Dashboard({ date }) {
       </div>
 
       <div className="row mx-1 my-1">
-        <h4>Reservations for {date}:</h4>
+        <h4>Reservations for {date === today ? "Today" : date}:</h4>
       </div>
 
       <ErrorAlert className="row mx-1 my-1" error={reservationsError} />

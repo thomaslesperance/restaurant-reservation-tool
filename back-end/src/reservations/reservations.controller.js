@@ -10,10 +10,7 @@ async function create(req, res) {
  * List handler for reservation resources
  */
 async function list(req, res) {
-  // if (req.query) {
-  //   res.json({ data: await service.listReservationsByDate(req.query...) });
-  // }
-  res.json({ data: await service.list() });
+  res.json({ data: await service.list(req.query.date) });
 }
 
 module.exports = {

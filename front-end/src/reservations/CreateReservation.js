@@ -34,7 +34,7 @@ function CreateReservation() {
     event.preventDefault();
     setCreateReservationError(null);
     createReservation(formData)
-      .then(() => history.push("/dashboard"))
+      .then(() => history.push(`/dashboard?date=${formData.reservation_date}`))
       .catch(setCreateReservationError);
   }
 
@@ -142,7 +142,7 @@ function CreateReservation() {
             <button
               type="button"
               className="btn btn-secondary mr-1"
-              onClick={() => history.push("/")}
+              onClick={() => history.goBack()}
             >
               Cancel
             </button>
