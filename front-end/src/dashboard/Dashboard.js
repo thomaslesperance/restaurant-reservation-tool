@@ -5,12 +5,6 @@ import { previous, next } from "../utils/date-time";
 import ErrorAlert from "../layout/ErrorAlert";
 import Reservation from "../reservations/Reservation";
 
-/**
- * Defines the dashboard page.
- * @param date
- *  the date for which the user wants to view reservations.
- * @returns {JSX.Element}
- */
 function Dashboard({ date, today }) {
   //  reservations will be of type array based on knex api result of .select()
   const [reservations, setReservations] = useState([]);
@@ -67,7 +61,8 @@ function Dashboard({ date, today }) {
         <h4>Reservations for {date === today ? "Today" : date}</h4>
       </div>
 
-      <ErrorAlert className="row mx-1 my-1" error={reservationsError} />
+      {/* API error alert */}
+      <ErrorAlert error={reservationsError} />
 
       {/* {JSON.stringify(reservations)} */}
       <section>{reservationDisplays}</section>

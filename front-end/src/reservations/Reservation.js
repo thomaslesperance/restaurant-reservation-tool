@@ -18,23 +18,34 @@ function Reservation({ data }) {
         <p className="card-text">Created At: {data.created_at}</p>
         <p className="card-text">Last Updated: {data.updated_at}</p>
 
-        <Link
-          to={`/reservations/${data.reservation_id}/seat`}
-          className="btn btn-primary mr-1"
-        >
-          Seat
-        </Link>
+        <div className="row mx-1 my-1">
+          <div className="col-2 mr-1 p-0">
+            <Link
+              to={`/reservations/${data.reservation_id}/seat`}
+              className="btn btn-primary w-100 text-nowrap"
+            >
+              Seat
+            </Link>
+          </div>
 
-        <Link
-          to={`/reservations/${data.reservation_id}/edit`}
-          className="btn btn-secondary mr-1"
-        >
-          Edit
-        </Link>
+          <div className="col-2 mr-1 p-0">
+            <Link
+              to={`/reservations/${data.reservation_id}/edit`}
+              className="btn btn-secondary w-100 text-nowrap"
+            >
+              Edit
+            </Link>
+          </div>
 
-        <Link to={`/Dashboard`} className="btn btn-secondary mr-1">
-          Delete
-        </Link>
+          <div className="col-2 mr-1 p-0">
+            <Link
+              to="/Dashboard"
+              className="btn btn-secondary w-100 text-nowrap"
+            >
+              Delete
+            </Link>
+          </div>
+        </div>
       </div>
     </article>
   );

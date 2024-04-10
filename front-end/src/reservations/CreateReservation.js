@@ -44,7 +44,7 @@ function CreateReservation() {
       <h1>New Reservation</h1>
 
       <div className="row mx-1 my-1">
-        <ol class="breadcrumb border" style={{ width: "100%" }}>
+        <ol class="breadcrumb border w-100">
           <li class="breadcrumb-item">
             <Link to="/">Dashboard</Link>
           </li>
@@ -52,7 +52,10 @@ function CreateReservation() {
         </ol>
       </div>
 
-      <ErrorAlert className="row mx-1 my-1" error={createReservationError} />
+      {/* Client error alert(s) */}
+
+      {/* API error alert */}
+      <ErrorAlert error={createReservationError} />
 
       <article className="card row mx-1 my-1">
         <div className="card-body">
@@ -65,7 +68,7 @@ function CreateReservation() {
               className="form-control mb-2"
               id="first_name"
               name="first_name"
-              placeHolder="First name"
+              placeHolder="Jane"
               onChange={handleChange}
               value={formData.first_name}
             ></input>
@@ -78,7 +81,7 @@ function CreateReservation() {
               className="form-control mb-2"
               id="last_name"
               name="last_name"
-              placeHolder="Last name"
+              placeHolder="Doe"
               onChange={handleChange}
               value={formData.last_name}
             ></input>
@@ -100,11 +103,12 @@ function CreateReservation() {
               <h5>Reservation Date</h5>
             </label>
             <input
-              type="text"
+              type="date"
               className="form-control mb-2"
               id="reservation_date"
               name="reservation_date"
-              placeHolder="XX-XX-XXXX"
+              placeHolder="YYYY-MM-DD"
+              pattern="\d{4}-\d{2}-\d{2}"
               onChange={handleChange}
               value={formData.reservation_date}
             ></input>
@@ -113,11 +117,12 @@ function CreateReservation() {
               <h5>Reservation Time</h5>
             </label>
             <input
-              type="text"
+              type="time"
               className="form-control mb-2"
               id="reservation_time"
               name="reservation_time"
-              placeHolder="XX:XX AM/PM"
+              placeHolder="HH:MM"
+              pattern="[0-9]{2}:[0-9]{2}"
               onChange={handleChange}
               value={formData.reservation_time}
             ></input>
