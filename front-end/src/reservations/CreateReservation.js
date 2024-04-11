@@ -25,7 +25,7 @@ function CreateReservation() {
     let errorString = "";
 
     //Ensure date input is not a Tuesday
-    const dateObj = new Date(target.value);
+    const dateObj = new Date(target.value.replace("-", "/"));
     const dayOfWeek = dateObj.getDay();
     if (dayOfWeek === 1) {
       if (errorString) {
@@ -39,7 +39,7 @@ function CreateReservation() {
     }
 
     //Ensure date input is not in the past
-    const resDate = Date.parse(target.value);
+    const resDate = Date.parse(target.value.replace("-", "/"));
     const present = Date.now();
     console.log(
       "resDate",
