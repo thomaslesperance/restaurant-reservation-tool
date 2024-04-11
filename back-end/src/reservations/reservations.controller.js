@@ -5,15 +5,28 @@ function hasValidDayOfWeek(req, res, next) {
   const reqDateString = req.body.data.reservation_date;
   const dateObj = new Date(reqDateString);
   const dayOfWeek = dateObj.getDay();
-  console.log(dayOfWeek);
   if (dayOfWeek === 1) {
-    next({ status: 400, message: "Reservations cannot be made on a Tuesday" });
+    next({
+      status: 400,
+      message: "(API) Reservations cannot be made on a Tuesday",
+    });
   } else {
     next();
   }
 }
 
-async function hasFutureDate(req, res, next) {}
+function hasFutureDate(req, res, next) {
+  const present = Date.now();
+  const resDate = Date.parse(req.body.data.reservation_date);
+  if (resDate - present < 0) {
+    next({
+      status: 400,
+      message: "(API) Reservations cannot be made for a previous date",
+    });
+  } else {
+    next();
+  }
+}
 
 async function create(req, res) {
   const response = await service.create(req.body.data);
@@ -25,6 +38,6 @@ async function list(req, res) {
 }
 
 module.exports = {
-  create: [hasValidDayOfWeek, asyncErrorBoundary(create)],
+  create: [hasValidDayOfWeek, hasFutureDate, asyncErrorBoundary(create)],
   list: asyncErrorBoundary(list),
 };

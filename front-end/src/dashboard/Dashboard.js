@@ -64,7 +64,9 @@ function Dashboard({ date, today }) {
       {/* API error alert */}
       <ErrorAlert error={reservationsError} />
 
+      {/* To take a gander at the raw JSON returned from the API, uncomment below: */}
       {/* {JSON.stringify(reservations)} */}
+
       <section>{reservationDisplays}</section>
     </main>
   );

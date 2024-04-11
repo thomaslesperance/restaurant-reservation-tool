@@ -16,10 +16,52 @@ function CreateReservation() {
 
   //Initialize state and history
   const [formData, setFormData] = useState({ ...initialFormData });
-  const [createReservationError, setCreateReservationError] = useState(null);
+  const [apiError, setApiError] = useState(null);
+  const [formError, setFormError] = useState(null);
   const history = useHistory();
 
-  //Form change handler
+  //Client-side form validation
+  function validateDate({ target }) {
+    let errorString = "";
+
+    //Ensure date input is not a Tuesday
+    const dateObj = new Date(target.value);
+    const dayOfWeek = dateObj.getDay();
+    if (dayOfWeek === 1) {
+      if (errorString) {
+        errorString = errorString.concat(
+          "; ",
+          "reservation date cannot be a Tuesday"
+        );
+      } else {
+        errorString = "Reservation date cannot be a Tuesday";
+      }
+    }
+
+    //Ensure date input is not in the past
+    const resDate = Date.parse(target.value);
+    const present = Date.now();
+    console.log(
+      "resDate",
+      new Date(resDate).getDate(),
+      "present",
+      new Date(present).getDate()
+    );
+
+    if (resDate - present < -1) {
+      if (errorString) {
+        errorString = errorString.concat(
+          "; ",
+          "reservations cannot be made for a previous date"
+        );
+      } else {
+        errorString = "Reservations cannot be made for a previous date";
+      }
+    }
+
+    setFormError(Error(errorString));
+  }
+
   //Sync form input values with formData state
   function handleChange({ target }) {
     setFormData({
@@ -28,17 +70,14 @@ function CreateReservation() {
     });
   }
 
-  //Form submit handler
-  //Calls API with createReservation() and catches any returned error to use in <ErrorAlert />
   async function submitHandler(event) {
     event.preventDefault();
-    setCreateReservationError(null);
+    setApiError(null);
     createReservation(formData)
       .then(() => history.push(`/dashboard?date=${formData.reservation_date}`))
-      .catch(setCreateReservationError);
+      .catch(setApiError);
   }
 
-  //Return JSX containing breadcrumb and form elements
   return (
     <main>
       <h1>New Reservation</h1>
@@ -52,10 +91,8 @@ function CreateReservation() {
         </ol>
       </div>
 
-      {/* Client error alert(s) */}
-
       {/* API error alert */}
-      <ErrorAlert error={createReservationError} />
+      <ErrorAlert error={apiError} />
 
       <article className="card row mx-1 my-1">
         <div className="card-body">
@@ -108,7 +145,8 @@ function CreateReservation() {
               id="reservation_date"
               name="reservation_date"
               placeHolder="YYYY-MM-DD"
-              pattern="\d{4}-\d{2}-\d{2}"
+              // pattern="\d{4}-\d{2}-\d{2}"
+              onInput={validateDate}
               onChange={handleChange}
               value={formData.reservation_date}
             ></input>
@@ -139,6 +177,9 @@ function CreateReservation() {
               onChange={handleChange}
               value={formData.people}
             ></input>
+
+            {/* Client error alert(s) */}
+            <ErrorAlert error={formError} />
 
             <button type="submit" className="btn btn-primary mr-1">
               Submit
