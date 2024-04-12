@@ -4,7 +4,6 @@ import { createReservation } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 
 function CreateReservation() {
-  //Initial form data
   const initialFormData = {
     first_name: "",
     last_name: "",
@@ -14,53 +13,63 @@ function CreateReservation() {
     people: "",
   };
 
-  //Initialize state and history
   const [formData, setFormData] = useState({ ...initialFormData });
   const [apiError, setApiError] = useState(null);
-  const [formError, setFormError] = useState(null);
+  const [clientDateError, setClientDateError] = useState(null);
+  const [clientTimeError, setClientTimeError] = useState(null);
   const history = useHistory();
 
-  //Client-side form validation
+  //Client-side date validation
+  const dateError = new Error();
+
   function validateDate({ target }) {
-    let errorString = "";
+    notATuesday(target);
+    notOnPreviousDate(target);
 
-    //Ensure date input is not a Tuesday
-    const dateObj = new Date(target.value.replace("-", "/"));
-    const dayOfWeek = dateObj.getDay();
-    if (dayOfWeek === 1) {
-      if (errorString) {
-        errorString = errorString.concat(
-          "; ",
-          "reservation date cannot be a Tuesday"
-        );
-      } else {
-        errorString = "Reservation date cannot be a Tuesday";
-      }
+    if (dateError.message) {
+      setClientDateError(dateError);
     }
-
-    //Ensure date input is not in the past
-    const resDate = Date.parse(target.value.replace("-", "/"));
-    const present = Date.now();
-    console.log(
-      "resDate",
-      new Date(resDate).getDate(),
-      "present",
-      new Date(present).getDate()
-    );
-
-    if (resDate - present < -1) {
-      if (errorString) {
-        errorString = errorString.concat(
-          "; ",
-          "reservations cannot be made for a previous date"
-        );
-      } else {
-        errorString = "Reservations cannot be made for a previous date";
-      }
-    }
-
-    setFormError(Error(errorString));
   }
+
+  function notATuesday(target) {
+    const resDayOfWeek = new Date(target.value.replaceAll("-", "/")).getDay();
+
+    if (resDayOfWeek === 2) {
+      dateError.message = "Reservations cannot be on a Tuesday";
+    }
+  }
+
+  function notOnPreviousDate(target) {
+    const presentDate = new Date().getDate();
+    const resDate = new Date(target.value.replaceAll("-", "/")).getDate();
+
+    if (resDate - presentDate < 0) {
+      if (dateError.message) {
+        dateError.message = dateError.message.concat(
+          "; reservations cannot be made for a previous date"
+        );
+      } else {
+        dateError.message = "Reservations cannot be on a previous date";
+      }
+    }
+  }
+
+  //Client-side time validation
+  const timeError = new Error();
+
+  function validateTime({ target }) {
+    notAtPreviousTime(target);
+    notAfter930(target);
+    notBefore1030(target);
+
+    if (timeError.message) {
+      setClientTimeError(timeError);
+    }
+  }
+
+  function notAtPreviousTime(target) {}
+  function notAfter930(target) {}
+  function notBefore1030(target) {}
 
   //Sync form input values with formData state
   function handleChange({ target }) {
@@ -70,7 +79,7 @@ function CreateReservation() {
     });
   }
 
-  async function submitHandler(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
     setApiError(null);
     createReservation(formData)
@@ -91,12 +100,9 @@ function CreateReservation() {
         </ol>
       </div>
 
-      {/* API error alert */}
-      <ErrorAlert error={apiError} />
-
       <article className="card row mx-1 my-1">
         <div className="card-body">
-          <form onSubmit={submitHandler}>
+          <form onSubmit={handleSubmit}>
             <label for="first_name" className="formLabel">
               <h5>First Name</h5>
             </label>
@@ -139,17 +145,21 @@ function CreateReservation() {
             <label for="reservation_date" className="formLabel">
               <h5>Reservation Date</h5>
             </label>
+
             <input
               type="date"
               className="form-control mb-2"
               id="reservation_date"
               name="reservation_date"
               placeHolder="YYYY-MM-DD"
-              // pattern="\d{4}-\d{2}-\d{2}"
+              pattern="\d{4}-\d{2}-\d{2}"
               onInput={validateDate}
               onChange={handleChange}
               value={formData.reservation_date}
             ></input>
+
+            {/* Client date error alert(s) */}
+            <ErrorAlert error={clientDateError} />
 
             <label for="reservation_time" className="formLabel">
               <h5>Reservation Time</h5>
@@ -161,9 +171,13 @@ function CreateReservation() {
               name="reservation_time"
               placeHolder="HH:MM"
               pattern="[0-9]{2}:[0-9]{2}"
+              onInput={validateTime}
               onChange={handleChange}
               value={formData.reservation_time}
             ></input>
+
+            {/* Client time error alert(s) */}
+            <ErrorAlert error={clientTimeError} />
 
             <label for="people" className="formLabel">
               <h5>Party Size</h5>
@@ -178,9 +192,6 @@ function CreateReservation() {
               value={formData.people}
             ></input>
 
-            {/* Client error alert(s) */}
-            <ErrorAlert error={formError} />
-
             <button type="submit" className="btn btn-primary mr-1">
               Submit
             </button>
@@ -192,6 +203,9 @@ function CreateReservation() {
             >
               Cancel
             </button>
+
+            {/* API error alert */}
+            <ErrorAlert error={apiError} />
           </form>
         </div>
       </article>
@@ -200,3 +214,15 @@ function CreateReservation() {
 }
 
 export default CreateReservation;
+
+//  New reservation needed validations:
+//  Date-
+/// Not a Tuesday
+/// Not in the past(date)
+/// Time-
+/// Not in the past(time)
+/// Not after 9:30 PM
+/// Not before 10:30 AM
+/// validateDate = [notATuesday, notOnPreviousDate]
+/// validateTime = [notAtPreviousTime, notAfter930, notBefore1030]
+/// Event object created by input elements passed to & mutated by each
