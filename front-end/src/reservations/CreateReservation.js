@@ -23,27 +23,36 @@ function CreateReservation() {
   const dateError = new Error();
 
   function validateDate({ target }) {
-    notATuesday(target);
-    notOnPreviousDate(target);
+    setClientDateError(null);
+
+    const dateObject = new Date(target.value.replaceAll("-", "/"));
+
+    const dateData = {
+      dayOfWeek: dateObject.getDay(),
+      currentDate: new Date().getDate(),
+      date: dateObject.getDate(),
+    };
+
+    notATuesday(dateData);
+    notOnPreviousDate(dateData);
 
     if (dateError.message) {
       setClientDateError(dateError);
     }
   }
 
-  function notATuesday(target) {
-    const resDayOfWeek = new Date(target.value.replaceAll("-", "/")).getDay();
+  function notATuesday(dateData) {
+    const { dayOfWeek } = dateData;
 
-    if (resDayOfWeek === 2) {
+    if (dayOfWeek === 2) {
       dateError.message = "Reservations cannot be on a Tuesday";
     }
   }
 
-  function notOnPreviousDate(target) {
-    const presentDate = new Date().getDate();
-    const resDate = new Date(target.value.replaceAll("-", "/")).getDate();
+  function notOnPreviousDate(dateData) {
+    const { currentDate, date } = dateData;
 
-    if (resDate - presentDate < 0) {
+    if (date - currentDate < 0) {
       if (dateError.message) {
         dateError.message = dateError.message.concat(
           "; reservations cannot be made for a previous date"
@@ -58,18 +67,49 @@ function CreateReservation() {
   const timeError = new Error();
 
   function validateTime({ target }) {
-    notAtPreviousTime(target);
-    notAfter930(target);
-    notBefore1030(target);
+    setClientTimeError(null);
+
+    const [hours, minutes] = target.value.split(":");
+
+    const timeData = {
+      hours: Number(hours),
+      minutes: Number(minutes),
+      currentHours: new Date().getHours(),
+      currentMinutes: new Date().getMinutes(),
+    };
+
+    notAtPreviousTime(timeData);
+    notAfter930(timeData);
+    notBefore1030(timeData);
 
     if (timeError.message) {
       setClientTimeError(timeError);
     }
   }
 
-  function notAtPreviousTime(target) {}
-  function notAfter930(target) {}
-  function notBefore1030(target) {}
+  function notAtPreviousTime(timeData) {
+    const { hours, minutes, currentHours, currentMinutes } = timeData;
+    if (
+      (hours === currentHours && minutes < currentMinutes) ||
+      hours < currentHours
+    ) {
+      timeError.message = "Reservations cannot be made for a previous time";
+    }
+  }
+
+  function notAfter930(timeData) {
+    const { hours, minutes } = timeData;
+    if ((hours === 21 && minutes >= 30) || hours > 21) {
+      timeError.message = "Reservations cannot be made after 9:30 PM";
+    }
+  }
+
+  function notBefore1030(timeData) {
+    const { hours, minutes } = timeData;
+    if ((hours === 10 && minutes <= 30) || hours < 10) {
+      timeError.message = "Reservations cannot be made before 10:30 AM";
+    }
+  }
 
   //Sync form input values with formData state
   function handleChange({ target }) {
@@ -214,15 +254,3 @@ function CreateReservation() {
 }
 
 export default CreateReservation;
-
-//  New reservation needed validations:
-//  Date-
-/// Not a Tuesday
-/// Not in the past(date)
-/// Time-
-/// Not in the past(time)
-/// Not after 9:30 PM
-/// Not before 10:30 AM
-/// validateDate = [notATuesday, notOnPreviousDate]
-/// validateTime = [notAtPreviousTime, notAfter930, notBefore1030]
-/// Event object created by input elements passed to & mutated by each
