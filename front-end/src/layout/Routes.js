@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 import Dashboard from "../dashboard/Dashboard";
 import CreateReservation from "../reservations/CreateReservation";
+import CreateTable from "../tables/CreateTable";
 import NotFound from "./NotFound";
 import { today } from "../utils/date-time";
 
@@ -35,6 +36,10 @@ function Routes() {
           date={searchParams.size ? searchParams.get("date") : today()}
           today={today()}
         />
+      </Route>
+
+      <Route exact={true} path="/tables/new">
+        <CreateTable />
       </Route>
 
       <Route>
