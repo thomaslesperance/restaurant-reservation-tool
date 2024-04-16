@@ -17,6 +17,7 @@ function Reservation({ data }) {
         <p className="card-text">Party Size: {data.people}</p>
         <p className="card-text">Created At: {data.created_at}</p>
         <p className="card-text">Last Updated: {data.updated_at}</p>
+        <h6 className="card-text">Reservation ID: {data.reservation_id}</h6>
 
         <div className="row mx-1 my-1">
           <div className="col-2 mr-1 p-0">
