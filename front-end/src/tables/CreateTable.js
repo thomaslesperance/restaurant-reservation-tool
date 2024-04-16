@@ -40,7 +40,7 @@ function CreateTable() {
 
     const capacityInput = target.value;
 
-    if (Number(capacityInput) === NaN) {
+    if (Number.isNaN(Number(capacityInput))) {
       capacityError.message = "Table capacity must be a number";
     }
 

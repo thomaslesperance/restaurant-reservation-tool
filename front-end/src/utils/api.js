@@ -69,6 +69,17 @@ export async function listReservations(params, signal) {
 }
 
 /**
+ * Retrieves all existing tables.
+ * @returns {Promise<[table]>}
+ *  a promise that resolves to a possibly empty array of tables saved in the database.
+ */
+
+export async function listTables(signal) {
+  const url = new URL(`${API_BASE_URL}/tables`);
+  return await fetchJson(url, { headers, signal }, []);
+}
+
+/**
  * Sends data representing new reservation to be stored by API in database.
  * @returns
  *
