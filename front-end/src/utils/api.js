@@ -102,3 +102,15 @@ export async function createTable(params) {
   const jsonData = JSON.stringify({ data: params });
   return await fetchJson(url, { headers, method: "POST", body: jsonData }, []);
 }
+
+/**
+ * Sends data representing reservation to be updated by API in database.
+ * @returns
+ *
+ */
+
+export async function seatReservation(params, table_id) {
+  const url = new URL(`${API_BASE_URL}/tables/${table_id}/seat`);
+  const jsonData = JSON.stringify({ data: params });
+  return await fetchJson(url, { headers, method: "PUT", body: jsonData }, []);
+}

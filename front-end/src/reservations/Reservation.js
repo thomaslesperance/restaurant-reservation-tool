@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-function Reservation({ data }) {
+function Reservation({ data, setReservations }) {
   //  Need delete button handler
 
   return (

@@ -4,6 +4,8 @@ import { createTable } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 
 function CreateTable() {
+  console.log("top of CreateTable");
+
   const initialFormData = {
     table_name: "",
     capacity: "",
@@ -87,7 +89,7 @@ function CreateTable() {
       <article className="card row m-1">
         <div className="card-body">
           <form onSubmit={handleSubmit}>
-            <label for="table_name" className="formLabel">
+            <label htmlFor="table_name" className="formLabel">
               <h5>Table Name</h5>
             </label>
             <input
@@ -104,7 +106,7 @@ function CreateTable() {
             {/* Client table_name error alert(s) */}
             <ErrorAlert error={clientNameError} />
 
-            <label for="capacity" className="formLabel">
+            <label htmlFor="capacity" className="formLabel">
               <h5>Table Capacity</h5>
             </label>
             <input

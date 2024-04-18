@@ -1,6 +1,6 @@
 import React from "react";
 
-function Table({ data }) {
+function Table({ data, setTables }) {
   // Button handlers
 
   return (
