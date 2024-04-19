@@ -4,6 +4,10 @@ import { createReservation } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 
 function CreateReservation() {
+  //Hooks
+  const history = useHistory();
+
+  //State
   const initialFormData = {
     first_name: "",
     last_name: "",
@@ -12,12 +16,10 @@ function CreateReservation() {
     reservation_time: "",
     people: "",
   };
-
   const [formData, setFormData] = useState({ ...initialFormData });
   const [apiError, setApiError] = useState(null);
   const [clientDateError, setClientDateError] = useState(null);
   const [clientTimeError, setClientTimeError] = useState(null);
-  const history = useHistory();
 
   //Client-side date validation
   const dateError = new Error();
@@ -123,7 +125,9 @@ function CreateReservation() {
     event.preventDefault();
     setApiError(null);
     createReservation(formData)
-      .then(() => history.push(`/dashboard?date=${formData.reservation_date}`))
+      .then(() => {
+        history.push(`/dashboard?date=${formData.reservation_date}`);
+      })
       .catch(setApiError);
   }
 

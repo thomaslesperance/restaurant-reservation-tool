@@ -133,7 +133,16 @@ async function create(req, res) {
 }
 
 async function list(req, res) {
-  res.json({ data: await service.list(req.query.date) });
+  if (req.query.date) {
+    res.json({ data: await service.list(req.query.date) });
+  } else if (req.query.reservation_id) {
+    res.json({ data: await service.read(req.query.reservation_id) });
+  } else {
+    next({
+      status: 400,
+      message: "Server: Requests must include a date or reservation id",
+    });
+  }
 }
 
 module.exports = {

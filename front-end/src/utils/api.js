@@ -114,3 +114,19 @@ export async function seatReservation(params, table_id) {
   const jsonData = JSON.stringify({ data: params });
   return await fetchJson(url, { headers, method: "PUT", body: jsonData }, []);
 }
+
+/**
+ * Retrieves a single reservation based on the reservation_id passed.
+ * @returns
+ *
+ */
+
+export async function readReservation(params, signal) {
+  const url = new URL(`${API_BASE_URL}/reservations`);
+  Object.entries(params).forEach(([key, value]) =>
+    url.searchParams.append(key, value.toString())
+  );
+  return await fetchJson(url, { headers, signal }, [])
+    .then(formatReservationDate)
+    .then(formatReservationTime);
+}

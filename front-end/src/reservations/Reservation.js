@@ -1,8 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
-function Reservation({ data, setReservations }) {
+//
+import formatReservationDate from "../utils/format-reservation-date";
+import formatReservationTime from "../utils/format-reservation-time";
+//
+function Reservation({ data }) {
   //  Need delete button handler
+
+  formatReservationDate(data);
+  formatReservationTime(data);
 
   return (
     <article className="card row mx-1 my-1">

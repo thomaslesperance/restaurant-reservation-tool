@@ -6,6 +6,12 @@ function create(reservation) {
     .then(([id]) => id);
 }
 
+function read(reservation_id) {
+  return knex("reservations")
+    .where({ reservation_id })
+    .then((items) => items[0]);
+}
+
 function list(date) {
   return knex("reservations")
     .where("reservation_date", date)
@@ -15,5 +21,6 @@ function list(date) {
 
 module.exports = {
   create,
+  read,
   list,
 };

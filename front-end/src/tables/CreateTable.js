@@ -6,16 +6,18 @@ import ErrorAlert from "../layout/ErrorAlert";
 function CreateTable() {
   console.log("top of CreateTable");
 
+  //Hooks
+  const history = useHistory();
+
+  //State
   const initialFormData = {
     table_name: "",
     capacity: "",
   };
-
   const [formData, setFormData] = useState({ ...initialFormData });
   const [apiError, setApiError] = useState(null);
   const [clientNameError, setClientNameError] = useState(null);
   const [clientCapacityError, setClientCapacityError] = useState(null);
-  const history = useHistory();
 
   // Client-side name validation
   const nameError = new Error();
@@ -78,11 +80,11 @@ function CreateTable() {
       <h1>New Table</h1>
 
       <div className="row mx-1 my-1">
-        <ol class="breadcrumb border w-100">
-          <li class="breadcrumb-item">
+        <ol className="breadcrumb border w-100">
+          <li className="breadcrumb-item">
             <Link to="/">Dashboard</Link>
           </li>
-          <li class="breadcrumb-item active">New Table</li>
+          <li className="breadcrumb-item active">New Table</li>
         </ol>
       </div>
 
@@ -97,7 +99,7 @@ function CreateTable() {
               className="form-control mb-2"
               id="table_name"
               name="table_name"
-              placeHolder="Bar 1"
+              placeholder="Bar 1"
               onInput={validateName}
               onChange={handleChange}
               value={formData.table_name}
@@ -114,7 +116,7 @@ function CreateTable() {
               className="form-control mb-2"
               id="capacity"
               name="capacity"
-              placeHolder="4"
+              placeholder="4"
               min="1"
               max="99"
               onInput={validateCapacity}

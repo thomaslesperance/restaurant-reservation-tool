@@ -1,48 +1,67 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 //
 import ErrorAlert from "../layout/ErrorAlert";
 import Table from "../tables/Table";
 import Reservation from "../reservations/Reservation";
 //
-import { listTables, listReservations } from "../utils/api";
+import { listReservations, listTables } from "../utils/api";
 import { today, previous, next } from "../utils/date-time";
 
 function Dashboard() {
   console.log("top of Dashboard");
 
-  // Hooks / state
+  //Hooks
   const { search } = useLocation();
 
+  //State
+  const [isLoading, setIsLoading] = useState(false);
+  //
   const [reservations, setReservations] = useState([]);
-  const [tables, setTables] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
+  //
+  const [tables, setTables] = useState([]);
   const [tablesError, setTablesError] = useState(null);
+  //
 
-  // Variables
+  //Calculate date for browsing reservations
+  let date;
   const searchParams = new URLSearchParams(search);
-  const date = searchParams.size ? searchParams.get("date") : today();
-  const previousDate = previous(date);
-  const nextDate = next(date);
 
-  // useEffect()
+  if (searchParams.has("date")) {
+    date = searchParams.get("date");
+  } else {
+    date = today();
+  }
+
+  //useEffect
   useEffect(loadTables, []); // tables = type Array
   useEffect(loadReservations, [date]); // reservations = type Array
 
   function loadTables() {
     console.log("loadTables");
-    const abortController = new AbortController();
+    setIsLoading(true);
     setTablesError(null);
-    listTables(abortController.signal).then(setTables).catch(setTablesError);
+    const abortController = new AbortController();
+    listTables(abortController.signal)
+      .then((response) => {
+        setTables(response);
+        setIsLoading(false);
+      })
+      .catch(setTablesError);
     return () => abortController.abort();
   }
 
   function loadReservations() {
-    console.log("loadReservations");
-    const abortController = new AbortController();
+    console.log("loadReservations: date using:", date);
+    setIsLoading(true);
     setReservationsError(null);
+    const abortController = new AbortController();
     listReservations({ date }, abortController.signal)
-      .then(setReservations)
+      .then((response) => {
+        setReservations(response);
+        setIsLoading(false);
+      })
       .catch(setReservationsError);
     return () => abortController.abort();
   }
@@ -50,19 +69,17 @@ function Dashboard() {
 
   // Component lists
   const tableDisplays = tables.map((table) => {
-    return <Table key={table.table_id} data={table} setTables={setTables} />;
+    return <Table key={table.table_id} data={table} />;
   });
 
   const reservationDisplays = reservations.map((reservation) => {
-    return (
-      <Reservation
-        key={reservation.reservation_id}
-        data={reservation}
-        setReservations={setReservations}
-      />
-    );
+    return <Reservation key={reservation.reservation_id} data={reservation} />;
   });
   ////
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <main>
@@ -86,23 +103,24 @@ function Dashboard() {
 
       <section className="row m-1 mb-4">{tableDisplays}</section>
 
-      <div className="row mx-1 my-1">
-        <h4>Reservations for {date === today ? "Today" : date}</h4>
-      </div>
+      <div className="row m-1 border p-2">
+        <div className="col-md text-nowrap">
+          <h4>Reservations</h4>
+          <h4>[ {date === today ? "Today" : date} ]</h4>
+        </div>
 
-      <div className="row mx-1 mt-1 mb-4">
-        <div className="col-3 mx-auto p-0">
+        <div className="col-md-3 mb-1 align-self-end">
           <Link
-            to={`/dashboard?date=${previousDate}`}
+            to={`/dashboard?date=${previous(date)}`}
             className="btn btn-primary w-100"
           >
             Previous
           </Link>
         </div>
 
-        <div className="col-3 mx-auto p-0">
+        <div className="col-md-3 mb-1 align-self-end">
           <Link
-            to={`/dashboard?date=${nextDate}`}
+            to={`/dashboard?date=${next(date)}`}
             className="btn btn-primary w-100"
           >
             Next
@@ -116,7 +134,15 @@ function Dashboard() {
       {/* To take a gander at the raw JSON returned from the API, uncomment below: */}
       {/* {JSON.stringify(reservations)} */}
 
-      <section>{reservationDisplays}</section>
+      <section>
+        {reservationDisplays.length ? (
+          reservationDisplays
+        ) : (
+          <h6 className="row m-1 justify-content-center">
+            No reservations for this date
+          </h6>
+        )}
+      </section>
     </main>
   );
 }

@@ -3,44 +3,63 @@ import { Link, useHistory, useParams } from "react-router-dom";
 //
 import ErrorAlert from "../layout/ErrorAlert";
 //
-import { listTables, readReservation, seatReservation } from "../utils/api";
+import { readReservation, listTables, seatReservation } from "../utils/api";
+import formatReservationDate from "../utils/format-reservation-date";
+import formatReservationTime from "../utils/format-reservation-time";
 
 function SeatReservation() {
-  // Hooks / state
+  console.log("top of SeatReservation");
+
+  //Hooks
   const history = useHistory();
   const { reservationId } = useParams();
 
-  const [selectedTable, setSelectedTable] = useState();
-  const [reservation, setReservation] = useState([]);
+  //State
+  const [isLoading, setIsLoading] = useState(false);
+  const [reservation, setReservation] = useState({});
   const [tables, setTables] = useState([]);
-  const [reservationError, setReservationError] = useState(null);
-  const [tablesError, setTablesError] = useState(null);
+  const [selectedTableId, setSelectedTableId] = useState("");
   const [apiError, setApiError] = useState(null);
 
-  // useEffect()
+  //useEffect
   useEffect(loadTables, []); // tables = type Array
-  useEffect(loadReservation, [reservationId]); //
+  useEffect(loadReservation, [reservationId]); // reservation = type Object
 
-  function loadTables() {
+  function loadReservation() {
+    console.log("loadReservation");
+    setIsLoading(true);
+    setApiError(null);
     const abortController = new AbortController();
-    setTablesError(null);
-    listTables(abortController.signal).then(setTables).catch(setTablesError);
+    readReservation({ reservation_id: reservationId }, abortController.signal)
+      .then((response) => {
+        formatReservationDate(response);
+        formatReservationTime(response);
+        setReservation(response);
+        setIsLoading(false);
+      })
+      .catch(setApiError);
     return () => abortController.abort();
   }
 
-  function loadReservation() {
+  function loadTables() {
+    console.log("loadTables");
+    setIsLoading(true);
+    setApiError(null);
     const abortController = new AbortController();
-    setReservationError(null);
-    readReservation({ reservationId }, abortController.signal)
-      .then(setReservation)
-      .catch(setReservationError);
+    listTables(abortController.signal)
+      .then((response) => {
+        setTables(response);
+        setIsLoading(false);
+      })
+      .catch(setApiError);
     return () => abortController.abort();
   }
   ////
 
+  //List for rendering
   const tableSelectOptions = tables.map((table) => {
     return (
-      <option value={table.table_name} key={table.table_id}>
+      <option value={table.table_id} key={table.table_id}>
         {table.table_name} - {table.capacity}
       </option>
     );
@@ -49,11 +68,18 @@ function SeatReservation() {
   function handleSubmit(event) {
     event.preventDefault();
     setApiError(null);
-    seatReservation({ selectedTable })
-      .then(() =>
-        history.push(`/dashboard?date=${reservation.reservation_date}`)
-      )
+    seatReservation(
+      { reservation_id: reservation.reservation_id },
+      selectedTableId
+    )
+      .then(() => {
+        history.push(`/dashboard?date=${reservation.reservation_date}`);
+      })
       .catch(setApiError);
+  }
+
+  if (isLoading) {
+    return <div>Loading...</div>;
   }
 
   return (
@@ -69,13 +95,7 @@ function SeatReservation() {
         </ol>
       </div>
 
-      {/* API tables error alert */}
-      <ErrorAlert error={tablesError} />
-
-      {/* API reservations error alert */}
-      <ErrorAlert error={reservationError} />
-
-      {/* API reservations error alert */}
+      {/* API error alert */}
       <ErrorAlert error={apiError} />
 
       <h4>Reservation</h4>
@@ -106,15 +126,16 @@ function SeatReservation() {
       <div className="row m-1 card">
         <div className="card-body">
           <form onSubmit={handleSubmit}>
-            <label for="table_id" className="formLabel">
+            <label htmlFor="table_id" className="formLabel">
               <h4>Select Table</h4>
+              <h6>Table Name - Table Capacity</h6>
             </label>
             <select
               className="form-control mb-2"
               name="table_id"
               id="table_id"
-              value={selectedTable}
-              onChange={(e) => setSelectedTable(e.target.value)}
+              value={selectedTableId}
+              onChange={(e) => setSelectedTableId(e.target.value)}
             >
               <option value="">--Please choose an option--</option>
               {tableSelectOptions}
