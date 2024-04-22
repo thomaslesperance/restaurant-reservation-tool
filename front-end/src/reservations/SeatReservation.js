@@ -20,6 +20,7 @@ function SeatReservation() {
   const [tables, setTables] = useState([]);
   const [selectedTableId, setSelectedTableId] = useState("");
   const [apiError, setApiError] = useState(null);
+  const [clientError, setClientError] = useState(null);
 
   //useEffect
   useEffect(loadTables, []); // tables = type Array
@@ -65,6 +66,13 @@ function SeatReservation() {
     );
   });
 
+  function handleChange({ target }) {
+    // Do not seat a reservation with more people than the capacity of the table
+    // const reservationSize
+    // const selectedTableCapacity
+    // setSelectedTableId(e.target.value)
+  }
+
   function handleSubmit(event) {
     event.preventDefault();
     setApiError(null);
@@ -97,6 +105,9 @@ function SeatReservation() {
 
       {/* API error alert */}
       <ErrorAlert error={apiError} />
+
+      {/* Client error alert */}
+      <ErrorAlert error={clientError} />
 
       <h4>Reservation</h4>
       <div className="row m-1 card">
@@ -135,7 +146,7 @@ function SeatReservation() {
               name="table_id"
               id="table_id"
               value={selectedTableId}
-              onChange={(e) => setSelectedTableId(e.target.value)}
+              onChange={handleChange}
             >
               <option value="">--Please choose an option--</option>
               {tableSelectOptions}
@@ -143,6 +154,14 @@ function SeatReservation() {
 
             <button type="submit" className="btn btn-primary mr-1">
               Submit
+            </button>
+
+            <button
+              type="button"
+              className="btn btn-secondary mr-1"
+              onClick={() => history.goBack()}
+            >
+              Cancel
             </button>
           </form>
         </div>
