@@ -18,7 +18,7 @@ function SeatReservation() {
   const [isLoading, setIsLoading] = useState(false);
   const [reservation, setReservation] = useState({});
   const [tables, setTables] = useState([]);
-  const [selectedTableId, setSelectedTableId] = useState("");
+  const [selectedTableId, setSelectedTableId] = useState(""); //type string
   const [apiError, setApiError] = useState(null);
   const [clientError, setClientError] = useState(null);
 
@@ -35,6 +35,7 @@ function SeatReservation() {
       .then((response) => {
         formatReservationDate(response);
         formatReservationTime(response);
+        console.log(response);
         setReservation(response);
         setIsLoading(false);
       })
@@ -47,8 +48,9 @@ function SeatReservation() {
     setIsLoading(true);
     setApiError(null);
     const abortController = new AbortController();
-    listTables(abortController.signal)
+    listTables(abortController.signal, { available: true })
       .then((response) => {
+        console.log(response);
         setTables(response);
         setIsLoading(false);
       })
@@ -67,10 +69,17 @@ function SeatReservation() {
   });
 
   function handleChange({ target }) {
-    // Do not seat a reservation with more people than the capacity of the table
-    // const reservationSize
-    // const selectedTableCapacity
-    // setSelectedTableId(e.target.value)
+    setClientError(null);
+    const selectedTableCapacity = tables.find(
+      (table) => Number(table.table_id) === Number(target.value)
+    ).capacity;
+    if (reservation.people > selectedTableCapacity) {
+      setClientError(
+        new Error("Reservation size must not exceed table capacity")
+      );
+    } else {
+      setSelectedTableId(target.value);
+    }
   }
 
   function handleSubmit(event) {

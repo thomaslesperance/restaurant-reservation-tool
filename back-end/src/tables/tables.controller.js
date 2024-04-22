@@ -1,4 +1,5 @@
 const service = require("./tables.service");
+const reservationsService = require("../reservations/reservations.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 
 const uiPropertyNames = {
@@ -6,6 +7,7 @@ const uiPropertyNames = {
   capacity: "Table Capacity",
 };
 
+// Validation middleware
 function logReqData(req, res, next) {
   console.log("Req timestamp", Date.now());
   const { data = {} } = req.body;
@@ -63,13 +65,73 @@ function capacityValid(req, res, next) {
   }
 }
 
+async function tableAvailable(req, res, next) {
+  const table = await service.read(req.params.tableId);
+  if (!table.reservation_id) {
+    res.locals.tableId = req.params.tableId;
+    next();
+  } else {
+    next({
+      status: 400,
+      message: "Server: Table must be 'Free'",
+    });
+  }
+}
+
+async function sufficientTableCapacity(req, res, next) {
+  const { people } = await reservationsService.read(
+    req.body.data.reservation_id
+  );
+  const { capacity } = await service.read(res.locals.tableId);
+  if (people > capacity) {
+    next({
+      status: 400,
+      message: "Server: Insufficient table capacity",
+    });
+  } else {
+    res.locals.reservation_id = req.body.data.reservation_id;
+    next();
+  }
+}
+
+async function tableOccupied(req, res, next) {
+  const table = await service.read(req.params.tableId);
+  if (table.reservation_id) {
+    next();
+  } else {
+    next({
+      status: 400,
+      message: "Server: Only 'Occupied' tables can be finished",
+    });
+  }
+}
+
+////
+
+// CRUDL functions
 async function create(req, res) {
   await service.create(req.body.data);
   res.sendStatus(204);
 }
 
+async function update(req, res) {
+  const { tableId, reservation_id } = res.locals;
+  res.json({
+    data: await service.update(tableId, reservation_id),
+  });
+}
+
+async function destroy(req, res) {
+  await service.destroy(req.params.tableId);
+  res.sendStatus(204);
+}
+
 async function list(req, res) {
-  res.json({ data: await service.list() });
+  if (req.query.available) {
+    res.json({ data: await service.listAvailable() });
+  } else {
+    res.json({ data: await service.list() });
+  }
 }
 
 module.exports = {
@@ -81,5 +143,11 @@ module.exports = {
     capacityValid,
     asyncErrorBoundary(create),
   ],
+  update: [
+    asyncErrorBoundary(tableAvailable),
+    asyncErrorBoundary(sufficientTableCapacity),
+    asyncErrorBoundary(update),
+  ],
+  delete: [asyncErrorBoundary(tableOccupied), asyncErrorBoundary(destroy)],
   list: asyncErrorBoundary(list),
 };

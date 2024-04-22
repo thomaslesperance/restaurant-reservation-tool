@@ -69,7 +69,13 @@ function Dashboard() {
 
   // Component lists
   const tableDisplays = tables.map((table) => {
-    return <Table key={table.table_id} data={table} />;
+    return (
+      <Table
+        key={table.table_id}
+        table={table}
+        setTablesError={setTablesError}
+      />
+    );
   });
 
   const reservationDisplays = reservations.map((reservation) => {
@@ -148,3 +154,6 @@ function Dashboard() {
 }
 
 export default Dashboard;
+
+//Gray out seat button when reservation is seated
+//Break out tables and breadcrumb as components
