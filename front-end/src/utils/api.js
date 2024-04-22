@@ -137,12 +137,18 @@ export async function readReservation(params, signal) {
 }
 
 /**
- * Sends request to mark "null" in reservation_id field in database by API.
+ * Sends request to update database with "finished" / "null" in the "reservations" and "tables" tables, respectively.
  * @returns
  *
  */
 
-export async function finishTable(table_id) {
+export async function finishTable(params, table_id) {
   const url = new URL(`${API_BASE_URL}/tables/${table_id}/seat`);
-  return await fetchJson(url, { headers, method: "DELETE" }, []);
+  const jsonData = JSON.stringify({ data: params });
+  return await fetchJson(
+    url,
+    { headers, method: "DELETE", body: jsonData },
+    []
+  );
 }
+// { reservation_id: table.reservation_id }, table.table_id

@@ -9,7 +9,7 @@ function Table({ table, setTablesError }) {
         "Is this table ready to seat new guests? This cannot be undone."
       )
     ) {
-      finishTable(table.table_id)
+      finishTable({ reservation_id: table.reservation_id }, table.table_id)
         .then(window.location.reload())
         .catch(setTablesError);
     } else {
@@ -19,17 +19,17 @@ function Table({ table, setTablesError }) {
 
   return (
     <article className="card col-md-4 p-0">
-      <h5 className="card-header">{table.table_name}</h5>
-      <ul className="list-group list-group-flush">
-        <li className="list-group-item"> Table ID: {table.table_id}</li>
-        <li className="list-group-item"> Capacity: {table.capacity}</li>
-        <div className="row card-body justify-content-md-end">
-          <div className="col-md" table-table-id-status={`${table.table_id}`}>
-            {table.reservation_id ? "Occupied" : "Free"}
+      <div className="card-header p-0">
+        <div className="row m-0">
+          <div className="col-md">
+            <h5>{table.table_name}</h5>
+            <h6 dtable-table-id-status={`${table.table_id}`}>
+              {table.reservation_id ? "Occupied" : "Free"}
+            </h6>
           </div>
           {table.reservation_id && (
             <button
-              className="col-md btn btn-primary btn-small"
+              className="btn btn-primary btn-small col-md m-1"
               onClick={handleClick}
               data-table-id-finish={table.table_id}
             >
@@ -37,6 +37,10 @@ function Table({ table, setTablesError }) {
             </button>
           )}
         </div>
+      </div>
+      <ul className="list-group list-group-flush">
+        <li className="list-group-item p-2"> Table ID: {table.table_id}</li>
+        <li className="list-group-item p-2"> Capacity: {table.capacity}</li>
       </ul>
     </article>
   );

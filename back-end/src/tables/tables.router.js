@@ -15,3 +15,6 @@ router
   .all(methodNotAllowed);
 
 module.exports = router;
+
+//body: {data: { reservation_id: reservation.reservation_id }}  //for PUT
+//body: {data: { reservation_id: table.reservation_id }}     //for DELETE

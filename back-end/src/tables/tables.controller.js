@@ -97,6 +97,8 @@ async function sufficientTableCapacity(req, res, next) {
 async function tableOccupied(req, res, next) {
   const table = await service.read(req.params.tableId);
   if (table.reservation_id) {
+    res.locals.reservation_id = table.reservation_id;
+    res.locals.table_id = req.params.tableId;
     next();
   } else {
     next({
@@ -122,8 +124,10 @@ async function update(req, res) {
 }
 
 async function destroy(req, res) {
-  await service.destroy(req.params.tableId);
-  res.sendStatus(204);
+  const { reservation_id, table_id } = res.locals;
+  const result = await service.destroy(reservation_id, table_id);
+  console.log(result);
+  res.status(204).json(result);
 }
 
 async function list(req, res) {

@@ -11,12 +11,14 @@ function Reservation({ data }) {
   formatReservationTime(data);
 
   return (
-    <article className="card row mx-1 my-1">
-      <div className="card-body">
-        <h5 className="card-title">
+    <article className="card row m-1 p-0">
+      <div className="card-header p-2">
+        <h5>
           {data.first_name} {data.last_name}
         </h5>
-
+        <h6 data-reservation-id-status={data.reservation_id}>{data.status}</h6>
+      </div>
+      <div className="card-body">
         <p className="card-text">Mobile Number: {data.mobile_number}</p>
         <p className="card-text">Reservation Date: {data.reservation_date}</p>
         <p className="card-text">Reservation Time: {data.reservation_time}</p>
@@ -24,18 +26,21 @@ function Reservation({ data }) {
         <p className="card-text">Created At: {data.created_at}</p>
         <p className="card-text">Last Updated: {data.updated_at}</p>
         <h6 className="card-text">Reservation ID: {data.reservation_id}</h6>
-
-        <div className="row mx-1 my-1">
-          <div className="col-2 mr-1 p-0">
-            <Link
-              to={`/reservations/${data.reservation_id}/seat`}
-              className="btn btn-primary w-100 text-nowrap"
-            >
-              Seat
-            </Link>
+      </div>
+      <div className="card-footer p-0">
+        <div className="row m-1">
+          <div className="col-md-2 m-1 p-0">
+            {data.status === "booked" && (
+              <Link
+                to={`/reservations/${data.reservation_id}/seat`}
+                className="btn btn-primary w-100 text-nowrap"
+              >
+                Seat
+              </Link>
+            )}
           </div>
 
-          <div className="col-2 mr-1 p-0">
+          <div className="col-md-2 m-1 p-0">
             <Link
               to={`/reservations/${data.reservation_id}/edit`}
               className="btn btn-secondary w-100 text-nowrap"
@@ -44,7 +49,7 @@ function Reservation({ data }) {
             </Link>
           </div>
 
-          <div className="col-2 mr-1 p-0">
+          <div className="col-md-2 m-1 p-0">
             <Link
               to="/Dashboard"
               className="btn btn-secondary w-100 text-nowrap"
