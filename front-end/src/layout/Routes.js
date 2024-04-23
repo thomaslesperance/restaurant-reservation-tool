@@ -5,6 +5,7 @@ import Dashboard from "../dashboard/Dashboard";
 import CreateReservation from "../reservations/CreateReservation";
 import SeatReservation from "../reservations/SeatReservation";
 import CreateTable from "../tables/CreateTable";
+import Search from "../search/Search";
 import NotFound from "./NotFound";
 //
 
@@ -35,6 +36,10 @@ function Routes() {
 
       <Route exact={true} path="/tables/new">
         <CreateTable />
+      </Route>
+
+      <Route exact={true} path="/search">
+        <Search />
       </Route>
 
       <Route>

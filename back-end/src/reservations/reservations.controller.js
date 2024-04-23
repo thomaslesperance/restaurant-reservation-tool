@@ -132,11 +132,19 @@ async function create(req, res) {
   res.sendStatus(204);
 }
 
+async function update(req, res) {
+  res.json({
+    data: await service.update(req.params.reservation_id, req.body.data.status),
+  });
+}
+
 async function list(req, res) {
   if (req.query.date) {
     res.json({ data: await service.list(req.query.date) });
   } else if (req.query.reservation_id) {
     res.json({ data: await service.read(req.query.reservation_id) });
+  } else if (req.query.mobile_number) {
+    res.json({ data: await service.search(req.query.mobile_number) });
   } else {
     next({
       status: 400,
@@ -161,5 +169,6 @@ module.exports = {
     notBefore1030,
     asyncErrorBoundary(create),
   ],
+  update: asyncErrorBoundary(update),
   list: asyncErrorBoundary(list),
 };

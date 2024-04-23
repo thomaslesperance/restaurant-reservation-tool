@@ -8,4 +8,12 @@ router
   .post(controller.create)
   .all(methodNotAllowed);
 
+router
+  .route("/:reservation_id/status")
+  .put(controller.update)
+  .all(methodNotAllowed);
+
 module.exports = router;
+
+//{body: {data: { status: "<new-status>" } }} //for PUT
+//"http://localhost:5001/reservations?mobile_number=123456" // for GET

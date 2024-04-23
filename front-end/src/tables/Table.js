@@ -19,7 +19,7 @@ function Table({ table, setTablesError }) {
 
   return (
     <article className="card col-md-4 p-0">
-      <div className="card-header p-0">
+      <div className="card-header py-1 px-0">
         <div className="row m-0">
           <div className="col-md">
             <h5>{table.table_name}</h5>

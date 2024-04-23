@@ -78,9 +78,31 @@ function Dashboard() {
     );
   });
 
-  const reservationDisplays = reservations.map((reservation) => {
-    return <Reservation key={reservation.reservation_id} data={reservation} />;
-  });
+  // const reservationDisplays = reservations.map((reservation) => {
+  //   if (reservation.status !== "finished") {
+  //     return (
+  //       <Reservation key={reservation.reservation_id} data={reservation} />
+  //     );
+  //   }
+  // });
+
+  const reservationComponents = reservations.reduce(
+    (accumulator, reservation) => {
+      if (reservation.status !== "finished") {
+        const component = (
+          <Reservation key={reservation.reservation_id} data={reservation} />
+        );
+        accumulator.push(component);
+        return accumulator;
+      } else {
+        return accumulator;
+      }
+    },
+    []
+  );
+
+  console.log("log of reservationComponents", reservationComponents);
+
   ////
 
   if (isLoading) {
@@ -141,8 +163,8 @@ function Dashboard() {
       {/* {JSON.stringify(reservations)} */}
 
       <section>
-        {reservationDisplays.length ? (
-          reservationDisplays
+        {reservationComponents.length ? (
+          reservationComponents
         ) : (
           <h6 className="row m-1 justify-content-center">
             No reservations for this date
@@ -157,3 +179,23 @@ export default Dashboard;
 
 //Gray out seat button when reservation is seated
 //Break out tables and breadcrumb as components
+
+//Possible refactor:
+//<Dashboard /> =
+//  <h1> Dashboard
+//  <Breadcrumb />
+//  <h3> Tables
+//  <TablesDisplay />
+//  <h3> Reservations
+//  <ReservationsDisplay />
+
+//<TablesDisplay /> =
+//  useState, useEffect
+//  logic for tables list using <Table />
+//  return div with tables list
+
+//<ReservationsDisplay /> =
+//  useState, useEffect
+//  logic for reservations list using <Reservation />
+//  return: <ReservationPaginator />
+//  return: div with reservations list
