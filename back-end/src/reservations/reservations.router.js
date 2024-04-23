@@ -8,9 +8,11 @@ router
   .post(controller.create)
   .all(methodNotAllowed);
 
+router.route("/:reservation_id").put(controller.update).all(methodNotAllowed);
+
 router
   .route("/:reservation_id/status")
-  .put(controller.update)
+  .put(controller.updateStatus)
   .all(methodNotAllowed);
 
 module.exports = router;

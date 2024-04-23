@@ -3,12 +3,27 @@ import { Link } from "react-router-dom";
 //
 import formatReservationDate from "../utils/format-reservation-date";
 import formatReservationTime from "../utils/format-reservation-time";
+import { updateReservationStatus } from "../utils/api";
 //
 function Reservation({ data }) {
   //  Need delete button handler
 
   formatReservationDate(data);
   formatReservationTime(data);
+
+  function handleCancel() {
+    if (
+      window.confirm(
+        "Do you want to cancel this reservation? This cannot be undone."
+      )
+    ) {
+      updateReservationStatus({ status: "cancelled" }, data.reservation_id)
+        .then(window.location.reload())
+        .catch(console.log);
+    } else {
+      return;
+    }
+  }
 
   return (
     <article className="card row m-1 p-0">
@@ -41,21 +56,27 @@ function Reservation({ data }) {
           </div>
 
           <div className="col-md-2 m-1 p-0">
-            <Link
-              to={`/reservations/${data.reservation_id}/edit`}
-              className="btn btn-secondary w-100 text-nowrap"
-            >
-              Edit
-            </Link>
+            {data.status === "booked" && (
+              <Link
+                to={`/reservations/${data.reservation_id}/edit`}
+                className="btn btn-secondary w-100 text-nowrap"
+                href={`/reservations/${data.reservation_id}/edit`}
+              >
+                Edit
+              </Link>
+            )}
           </div>
 
           <div className="col-md-2 m-1 p-0">
-            <Link
-              to="/Dashboard"
-              className="btn btn-secondary w-100 text-nowrap"
-            >
-              Delete
-            </Link>
+            {data.status === "booked" && (
+              <button
+                onClick={handleCancel}
+                className="btn btn-secondary w-100 text-nowrap"
+                data-reservation-id-cancel={data.reservation_id}
+              >
+                Cancel
+              </button>
+            )}
           </div>
         </div>
       </div>

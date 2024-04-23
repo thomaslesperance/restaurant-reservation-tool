@@ -134,7 +134,16 @@ async function create(req, res) {
 
 async function update(req, res) {
   res.json({
-    data: await service.update(req.params.reservation_id, req.body.data.status),
+    data: await service.update(req.params.reservation_id, req.body.data),
+  });
+}
+
+async function updateStatus(req, res) {
+  res.json({
+    data: await service.updateStatus(
+      req.params.reservation_id,
+      req.body.data.status
+    ),
   });
 }
 
@@ -169,6 +178,21 @@ module.exports = {
     notBefore1030,
     asyncErrorBoundary(create),
   ],
-  update: asyncErrorBoundary(update),
+  update: [
+    logReqData,
+    bodyDataHas("first_name"),
+    bodyDataHas("last_name"),
+    bodyDataHas("mobile_number"),
+    bodyDataHas("reservation_date"),
+    bodyDataHas("reservation_time"),
+    bodyDataHas("people"),
+    notATuesday,
+    notOnPreviousDate,
+    notAtPreviousTime,
+    notAfter930,
+    notBefore1030,
+    asyncErrorBoundary(update),
+  ],
+  updateStatus: asyncErrorBoundary(updateStatus),
   list: asyncErrorBoundary(list),
 };

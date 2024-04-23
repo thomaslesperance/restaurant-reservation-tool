@@ -154,3 +154,27 @@ export async function finishTable(params, table_id) {
   );
 }
 // { reservation_id: table.reservation_id }, table.table_id
+
+/**
+ * Sends request to update database with provided status string in the "reservations" table.
+ * @returns
+ *
+ */
+
+export async function updateReservationStatus(params, reservation_id) {
+  const url = new URL(`${API_BASE_URL}/reservations/${reservation_id}/status`);
+  const jsonData = JSON.stringify({ data: params });
+  return await fetchJson(url, { headers, method: "PUT", body: jsonData }, []);
+}
+
+/**
+ * Sends request to update database with provided properties in the "reservations" table.
+ * @returns
+ *
+ */
+
+export async function updateReservation(params, reservation_id) {
+  const url = new URL(`${API_BASE_URL}/reservations/${reservation_id}`);
+  const jsonData = JSON.stringify({ data: params });
+  return await fetchJson(url, { headers, method: "PUT", body: jsonData }, []);
+}
