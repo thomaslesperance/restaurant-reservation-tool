@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
 //
+import Header from "../layout/Header";
 import ErrorAlert from "../layout/ErrorAlert";
 import Table from "../tables/Table";
 import Reservation from "../reservations/Reservation";
@@ -111,13 +112,7 @@ function Dashboard() {
 
   return (
     <main>
-      <h1>Dashboard</h1>
-
-      <div className="row mx-1 my-1">
-        <ol className="breadcrumb border w-100">
-          <li className="breadcrumb-item active">Dashboard</li>
-        </ol>
-      </div>
+      <Header headerTitle={"Dashboard"} />
 
       <div className="row m-1">
         <h4>Tables</h4>

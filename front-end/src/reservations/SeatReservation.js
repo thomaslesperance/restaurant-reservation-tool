@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useHistory, useParams } from "react-router-dom";
 //
+import Header from "../layout/Header";
 import ErrorAlert from "../layout/ErrorAlert";
 //
 import { readReservation, listTables, seatReservation } from "../utils/api";
@@ -96,26 +97,20 @@ function SeatReservation() {
   }
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <>
+        <Header headerTitle={"Seat Reservation"} />
+        <div>Loading...</div>)
+      </>
+    );
   }
 
   return (
     <main>
-      <h1>Seat Reservation</h1>
+      <Header headerTitle={"Seat Reservation"} />
 
-      <div className="row m-1">
-        <ol className="breadcrumb border w-100">
-          <li className="breadcrumb-item">
-            <Link to="/">Dashboard</Link>
-          </li>
-          <li className="breadcrumb-item active">Seat Reservation</li>
-        </ol>
-      </div>
-
-      {/* API error alert */}
       <ErrorAlert error={apiError} />
 
-      {/* Client error alert */}
       <ErrorAlert error={clientError} />
 
       <h4>Reservation</h4>

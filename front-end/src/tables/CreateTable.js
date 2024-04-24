@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
-import { createTable } from "../utils/api";
+//
+import Header from "../layout/Header";
 import ErrorAlert from "../layout/ErrorAlert";
+//
+import { createTable } from "../utils/api";
+//
 
 function CreateTable() {
   console.log("top of CreateTable");
@@ -77,7 +81,7 @@ function CreateTable() {
 
   return (
     <main>
-      <h1>New Table</h1>
+      <Header headerTitle={"Seat Reservation"} />
 
       <div className="row mx-1 my-1">
         <ol className="breadcrumb border w-100">
@@ -105,7 +109,6 @@ function CreateTable() {
               value={formData.table_name}
             ></input>
 
-            {/* Client table_name error alert(s) */}
             <ErrorAlert error={clientNameError} />
 
             <label htmlFor="capacity" className="formLabel">
@@ -124,7 +127,6 @@ function CreateTable() {
               value={formData.capacity}
             ></input>
 
-            {/* Client capacity error alert(s) */}
             <ErrorAlert error={clientCapacityError} />
 
             <button type="submit" className="btn btn-primary mr-1">
@@ -139,7 +141,6 @@ function CreateTable() {
               Cancel
             </button>
 
-            {/* API error alert */}
             <ErrorAlert error={apiError} />
           </form>
         </div>

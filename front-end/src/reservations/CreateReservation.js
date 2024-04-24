@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
-import { createReservation } from "../utils/api";
+//
+import Header from "../layout/Header";
+//
 import ErrorAlert from "../layout/ErrorAlert";
+import { createReservation } from "../utils/api";
+//
 
 function CreateReservation() {
   //Hooks
@@ -133,16 +137,7 @@ function CreateReservation() {
 
   return (
     <main>
-      <h1>New Reservation</h1>
-
-      <div className="row mx-1 my-1">
-        <ol class="breadcrumb border w-100">
-          <li class="breadcrumb-item">
-            <Link to="/">Dashboard</Link>
-          </li>
-          <li class="breadcrumb-item active">New Reservation</li>
-        </ol>
-      </div>
+      <Header headerTitle={"New Reservation"} />
 
       <article className="card row mx-1 my-1">
         <div className="card-body">
@@ -202,7 +197,6 @@ function CreateReservation() {
               value={formData.reservation_date}
             ></input>
 
-            {/* Client date error alert(s) */}
             <ErrorAlert error={clientDateError} />
 
             <label for="reservation_time" className="formLabel">
@@ -220,7 +214,6 @@ function CreateReservation() {
               value={formData.reservation_time}
             ></input>
 
-            {/* Client time error alert(s) */}
             <ErrorAlert error={clientTimeError} />
 
             <label for="people" className="formLabel">
@@ -248,7 +241,6 @@ function CreateReservation() {
               Cancel
             </button>
 
-            {/* API error alert */}
             <ErrorAlert error={apiError} />
           </form>
         </div>
