@@ -1,5 +1,7 @@
 import React from "react";
+//
 import Reservation from "./Reservation";
+//
 
 export default function ReservationsDisplay({ reservations }) {
   const reservationArray = reservations.reduce((accumulator, reservation) => {

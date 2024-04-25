@@ -10,9 +10,7 @@ import Search from "../search/Search";
 import NotFound from "./NotFound";
 //
 
-function Routes() {
-  console.log("top of Routes");
-
+export default function Routes() {
   return (
     <Switch>
       <Route exact={true} path="/">
@@ -53,16 +51,3 @@ function Routes() {
     </Switch>
   );
 }
-
-export default Routes;
-
-//  Dev client = port 3000
-//  Dev api = port 5001
-//  //
-//  Routing scheme
-//  /dashboard  ("/" redirects here)
-//  /search
-//  /reservations/new
-//  /reservations/:reservation_id/edit
-//  /reservations/:reservation_id/seat
-//  /tables/new

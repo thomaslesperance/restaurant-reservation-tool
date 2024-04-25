@@ -1,29 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 //
 import Header from "../layout/Header";
 import ErrorAlert from "../layout/ErrorAlert";
-import Table from "../tables/Table";
-import Reservation from "../reservations/Reservation";
+import TableDisplay from "../tables/TableDisplay";
+import DatePaginator from "./DatePaginator";
+import ReservationsDisplay from "../reservations/ReservationsDisplay";
 //
 import { listReservations, listTables } from "../utils/api";
-import { today, previous, next } from "../utils/date-time";
+import formatReservationDate from "../utils/format-reservation-date";
+import formatReservationTime from "../utils/format-reservation-time";
+import { today } from "../utils/date-time";
+//
 
-function Dashboard() {
-  console.log("top of Dashboard");
-
-  //Hooks
+export default function Dashboard() {
   const { search } = useLocation();
 
-  //State
   const [isLoading, setIsLoading] = useState(false);
-  //
   const [reservations, setReservations] = useState([]);
-  const [reservationsError, setReservationsError] = useState(null);
-  //
   const [tables, setTables] = useState([]);
-  const [tablesError, setTablesError] = useState(null);
-  //
+  const [apiError, setApiError] = useState(null);
 
   //Calculate date for browsing reservations
   let date;
@@ -35,162 +31,53 @@ function Dashboard() {
     date = today();
   }
 
-  //useEffect
   useEffect(loadTables, []); // tables = type Array
   useEffect(loadReservations, [date]); // reservations = type Array
 
   function loadTables() {
-    console.log("loadTables");
     setIsLoading(true);
-    setTablesError(null);
+    setApiError(null);
     const abortController = new AbortController();
     listTables(abortController.signal)
       .then((response) => {
         setTables(response);
         setIsLoading(false);
       })
-      .catch(setTablesError);
+      .catch(setApiError);
     return () => abortController.abort();
   }
 
   function loadReservations() {
-    console.log("loadReservations: date using:", date);
     setIsLoading(true);
-    setReservationsError(null);
+    setApiError(null);
     const abortController = new AbortController();
     listReservations({ date }, abortController.signal)
       .then((response) => {
+        formatReservationDate(response);
+        formatReservationTime(response);
         setReservations(response);
         setIsLoading(false);
       })
-      .catch(setReservationsError);
+      .catch(setApiError);
     return () => abortController.abort();
   }
-  ////
-
-  // Component lists
-  const tableDisplays = tables.map((table) => {
-    return (
-      <Table
-        key={table.table_id}
-        table={table}
-        setTablesError={setTablesError}
-      />
-    );
-  });
-
-  // const reservationDisplays = reservations.map((reservation) => {
-  //   if (reservation.status !== "finished") {
-  //     return (
-  //       <Reservation key={reservation.reservation_id} data={reservation} />
-  //     );
-  //   }
-  // });
-
-  const reservationComponents = reservations.reduce(
-    (accumulator, reservation) => {
-      if (reservation.status !== "finished") {
-        const component = (
-          <Reservation key={reservation.reservation_id} data={reservation} />
-        );
-        accumulator.push(component);
-        return accumulator;
-      } else {
-        return accumulator;
-      }
-    },
-    []
-  );
-
-  console.log("log of reservationComponents", reservationComponents);
-
-  ////
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <main>
+        <Header headerTitle={"Dashboard"} />
+        <div>Loading...</div>
+      </main>
+    );
   }
 
   return (
     <main>
       <Header headerTitle={"Dashboard"} />
-
-      <div className="row m-1">
-        <h4>Tables</h4>
-      </div>
-
-      {/* API tables error alert */}
-      <ErrorAlert error={tablesError} />
-
-      {/* To take a gander at the raw JSON returned from the API, uncomment below: */}
-      {/* {JSON.stringify(tables)} */}
-
-      <section className="row m-1 mb-4">{tableDisplays}</section>
-
-      <div className="row m-1 border p-2">
-        <div className="col-md text-nowrap">
-          <h4>Reservations</h4>
-          <h4>[ {date === today ? "Today" : date} ]</h4>
-        </div>
-
-        <div className="col-md-3 mb-1 align-self-end">
-          <Link
-            to={`/dashboard?date=${previous(date)}`}
-            className="btn btn-primary w-100"
-          >
-            Previous
-          </Link>
-        </div>
-
-        <div className="col-md-3 mb-1 align-self-end">
-          <Link
-            to={`/dashboard?date=${next(date)}`}
-            className="btn btn-primary w-100"
-          >
-            Next
-          </Link>
-        </div>
-      </div>
-
-      {/* API reservations error alert */}
-      <ErrorAlert error={reservationsError} />
-
-      {/* To take a gander at the raw JSON returned from the API, uncomment below: */}
-      {/* {JSON.stringify(reservations)} */}
-
-      <section>
-        {reservationComponents.length ? (
-          reservationComponents
-        ) : (
-          <h6 className="row m-1 justify-content-center">
-            No reservations for this date
-          </h6>
-        )}
-      </section>
+      <ErrorAlert error={apiError} />
+      <TableDisplay tables={tables} />
+      <DatePaginator date={date} />
+      <ReservationsDisplay reservations={reservations} />
     </main>
   );
 }
-
-export default Dashboard;
-
-//Gray out seat button when reservation is seated
-//Break out tables and breadcrumb as components
-
-//Possible refactor:
-//<Dashboard /> =
-//  <h1> Dashboard
-//  <Breadcrumb />
-//  <h3> Tables
-//  <TablesDisplay />
-//  <h3> Reservations
-//  <ReservationsDisplay />
-
-//<TablesDisplay /> =
-//  useState, useEffect
-//  logic for tables list using <Table />
-//  return div with tables list
-
-//<ReservationsDisplay /> =
-//  useState, useEffect
-//  logic for reservations list using <Reservation />
-//  return: <ReservationPaginator />
-//  return: div with reservations list

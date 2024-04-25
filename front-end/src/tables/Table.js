@@ -1,8 +1,9 @@
 import React from "react";
 //
 import { finishTable } from "../utils/api";
+//
 
-function Table({ table, setTablesError }) {
+export default function Table({ table, setTablesError }) {
   function handleClick() {
     if (
       window.confirm(
@@ -19,24 +20,22 @@ function Table({ table, setTablesError }) {
 
   return (
     <article className="card col-md-4 p-0">
-      <div className="card-header py-1 px-0">
-        <div className="row m-0">
-          <div className="col-md">
-            <h5>{table.table_name}</h5>
-            <h6 dtable-table-id-status={`${table.table_id}`}>
-              {table.reservation_id ? "Occupied" : "Free"}
-            </h6>
-          </div>
-          {table.reservation_id && (
-            <button
-              className="btn btn-primary btn-small col-md m-1"
-              onClick={handleClick}
-              data-table-id-finish={table.table_id}
-            >
-              Finish
-            </button>
-          )}
+      <div className="card-header row m-0 py-1 px-0">
+        <div className="col-md">
+          <h5>{table.table_name}</h5>
+          <h6 dtable-table-id-status={`${table.table_id}`}>
+            {table.reservation_id ? "Occupied" : "Free"}
+          </h6>
         </div>
+        {table.reservation_id && (
+          <button
+            className="btn btn-primary btn-small col-md m-1"
+            onClick={handleClick}
+            data-table-id-finish={table.table_id}
+          >
+            Finish
+          </button>
+        )}
       </div>
       <ul className="list-group list-group-flush">
         <li className="list-group-item p-2"> Table ID: {table.table_id}</li>
@@ -45,5 +44,3 @@ function Table({ table, setTablesError }) {
     </article>
   );
 }
-
-export default Table;

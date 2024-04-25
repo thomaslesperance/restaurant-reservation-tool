@@ -1,13 +1,11 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 //
-import formatReservationDate from "../utils/format-reservation-date";
-import formatReservationTime from "../utils/format-reservation-time";
 import { updateReservationStatus } from "../utils/api";
 //
-function Reservation({ data }) {
-  formatReservationDate(data);
-  formatReservationTime(data);
+
+export default function Reservation({ data }) {
+  const { pathname } = useLocation(); //produces string of pathname without query params
 
   function handleCancel() {
     if (
@@ -42,44 +40,44 @@ function Reservation({ data }) {
         <h6 className="card-text">Reservation ID: {data.reservation_id}</h6>
       </div>
 
-      <div className="card-footer row p-0 m-0">
-        <div className="col-md-2 m-1 p-0">
-          {data.status === "booked" && (
-            <Link
-              to={`/reservations/${data.reservation_id}/seat`}
-              className="btn btn-primary w-100 text-nowrap"
-            >
-              Seat
-            </Link>
-          )}
-        </div>
+      {pathname === "/dashboard" && (
+        <div className="card-footer row p-0 m-0">
+          <div className="col-md-2 m-1 p-0">
+            {data.status === "booked" && (
+              <Link
+                to={`/reservations/${data.reservation_id}/seat`}
+                className="btn btn-primary w-100 text-nowrap"
+              >
+                Seat
+              </Link>
+            )}
+          </div>
 
-        <div className="col-md-2 m-1 p-0">
-          {data.status === "booked" && (
-            <Link
-              to={`/reservations/${data.reservation_id}/edit`}
-              className="btn btn-secondary w-100 text-nowrap"
-              href={`/reservations/${data.reservation_id}/edit`}
-            >
-              Edit
-            </Link>
-          )}
-        </div>
+          <div className="col-md-2 m-1 p-0">
+            {data.status === "booked" && (
+              <Link
+                to={`/reservations/${data.reservation_id}/edit`}
+                className="btn btn-secondary w-100 text-nowrap"
+                href={`/reservations/${data.reservation_id}/edit`}
+              >
+                Edit
+              </Link>
+            )}
+          </div>
 
-        <div className="col-md-2 m-1 p-0">
-          {data.status === "booked" && (
-            <button
-              onClick={handleCancel}
-              className="btn btn-secondary w-100 text-nowrap"
-              data-reservation-id-cancel={data.reservation_id}
-            >
-              Cancel
-            </button>
-          )}
+          <div className="col-md-2 m-1 p-0">
+            {data.status === "booked" && (
+              <button
+                onClick={handleCancel}
+                className="btn btn-secondary w-100 text-nowrap"
+                data-reservation-id-cancel={data.reservation_id}
+              >
+                Cancel
+              </button>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </article>
   );
 }
-
-export default Reservation;

@@ -1,6 +1,7 @@
 import React from "react";
+//
 
-function ErrorAlert({ error }) {
+export default function ErrorAlert({ error }) {
   return (
     error && (
       <div className="row alert alert-danger mx-1 my-2">
@@ -9,5 +10,3 @@ function ErrorAlert({ error }) {
     )
   );
 }
-
-export default ErrorAlert;

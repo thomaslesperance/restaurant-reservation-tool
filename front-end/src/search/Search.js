@@ -9,8 +9,6 @@ import { listReservations } from "../utils/api";
 //
 
 export default function Search() {
-  console.log("top of Search");
-
   const [searchString, setSearchString] = useState("");
   const [reservations, setReservations] = useState([]);
   const [isLoading, setIsLoading] = useState(false);

@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
+//
 
-function SearchBox({ setSearchString }) {
+export default function SearchBox({ setSearchString }) {
   const mobileRef = useRef();
 
   function handleSubmit(event) {
@@ -27,5 +28,3 @@ function SearchBox({ setSearchString }) {
     </form>
   );
 }
-
-export default SearchBox;
