@@ -2,17 +2,12 @@ require("dotenv").config();
 const path = require("path");
 
 const {
-  DATABASE_URL = "postgres://thomas:x6wVhgWImhFbqzjiedr3KQzRJS2DC60y@dpg-coq0uqtjm4es73adb3f0-a.ohio-postgres.render.com/restaurant_reservation_tool_dev",
-  DATABASE_URL_DEVELOPMENT = {
-    host: "127.0.0.1",
-    port: 5432,
-    user: "postgres",
-    password: "postgres",
-    database: "restaurant-reservation-tool-db-dev",
-  },
+  DATABASE_URL = "postgresql://postgres@localhost/postgres",
+  DATABASE_URL_DEVELOPMENT = "postgresql://postgres@localhost/postgres",
   DATABASE_URL_TEST = "postgresql://postgres@localhost/postgres",
   DATABASE_URL_PREVIEW = "postgresql://postgres@localhost/postgres",
   DEBUG,
+  DB_SSL = false,
 } = process.env;
 
 module.exports = {
@@ -63,5 +58,6 @@ module.exports = {
       directory: path.join(__dirname, "src", "db", "seeds"),
     },
     debug: !!DEBUG,
+    ssl: DB_SSL,
   },
 };
