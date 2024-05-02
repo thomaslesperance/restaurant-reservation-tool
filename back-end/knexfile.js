@@ -2,7 +2,7 @@ require("dotenv").config();
 const path = require("path");
 
 const {
-  DATABASE_URL = "postgresql://postgres@localhost/postgres",
+  DATABASE_URL = "postgres://thomas:x6wVhgWImhFbqzjiedr3KQzRJS2DC60y@dpg-coq0uqtjm4es73adb3f0-a/restaurant_reservation_tool_dev",
   DATABASE_URL_DEVELOPMENT = {
     host: "127.0.0.1",
     port: 5432,
