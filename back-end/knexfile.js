@@ -7,7 +7,7 @@ const {
   DATABASE_URL_TEST = "postgresql://postgres@localhost/postgres",
   DATABASE_URL_PREVIEW = "postgresql://postgres@localhost/postgres",
   DEBUG,
-  DB_SSL = false,
+  DB_SSL = true,
 } = process.env;
 
 module.exports = {
