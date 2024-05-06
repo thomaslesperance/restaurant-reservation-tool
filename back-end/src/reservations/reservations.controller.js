@@ -1,56 +1,53 @@
 const service = require("./reservations.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 
-const uiPropertyNames = {
-  first_name: "First Name",
-  last_name: "Last Name",
-  mobile_number: "Mobile Number",
-  reservation_date: "Reservation Date",
-  reservation_time: "Reservation Time",
-  people: "Party Size",
-};
+function hasDataProp(req, res, next) {
+  if (!req.body.data) {
+    next({
+      status: 400,
+      message: `Server: requests must include 'data' property`,
+    });
+  } else {
+    const {
+      data: {
+        first_name,
+        last_name,
+        mobile_number,
+        reservation_date,
+        reservation_time,
+        people,
+      } = {},
+    } = req.body;
 
-function logReqData(req, res, next) {
-  const {
-    data: {
+    const [year, month, day] = reservation_date.split("-");
+    const [hours, minutes] = reservation_time.split(":");
+    const dateObject = new Date(`${year}-${month}-${day}T${hours}:${minutes}`);
+
+    const reservationData = {
       first_name,
       last_name,
       mobile_number,
       reservation_date,
       reservation_time,
       people,
-    } = {},
-  } = req.body;
+      dateObject,
+      year,
+      month,
+      day,
+      hours: Number(hours),
+      minutes: Number(minutes),
+      dayOfWeek: dateObject.getDay(),
+      currentDateObject: new Date(),
+    };
 
-  const [year, month, day] = reservation_date.split("-");
-  const [hours, minutes] = reservation_time.split(":");
-  const dateObject = new Date(`${year}-${month}-${day}T${hours}:${minutes}`);
+    console.log("Req time", Date.now(), "///", "Req data:", reservationData);
 
-  const reservationData = {
-    first_name,
-    last_name,
-    mobile_number,
-    reservation_date,
-    reservation_time,
-    people,
-    dateObject,
-    year,
-    month,
-    day,
-    hours: Number(hours),
-    minutes: Number(minutes),
-    dayOfWeek: dateObject.getDay(),
-    currentDateObject: new Date(),
-  };
+    for (const [key, value] of Object.entries(reservationData)) {
+      res.locals[key] = value;
+    }
 
-  console.log("Req time", Date.now());
-
-  for (const [key, value] of Object.entries(reservationData)) {
-    res.locals[key] = value;
-    console.log(`${key}: ${value}, type ${typeof value}`);
+    next();
   }
-
-  next();
 }
 
 function bodyDataHas(property) {
@@ -61,7 +58,7 @@ function bodyDataHas(property) {
     } else {
       next({
         status: 400,
-        message: `Server: Reservations must include '${uiPropertyNames[property]}'`,
+        message: `Server: Reservations must include '${property}' field`,
       });
     }
   };
@@ -127,9 +124,25 @@ function notBefore1030(req, res, next) {
   }
 }
 
+async function reservationExists(req, res, next) {
+  const response = await service.read(req.params.reservation_id);
+  if (response) {
+    res.locals.reservation = response;
+  } else {
+    next({
+      status: 404,
+      message: "Reservation not found",
+    });
+  }
+}
+
 async function create(req, res) {
   await service.create(req.body.data);
   res.sendStatus(204);
+}
+
+async function read(req, res) {
+  res.json({ data: res.locals.reservation });
 }
 
 async function update(req, res) {
@@ -164,7 +177,7 @@ async function list(req, res) {
 
 module.exports = {
   create: [
-    logReqData,
+    hasDataProp,
     bodyDataHas("first_name"),
     bodyDataHas("last_name"),
     bodyDataHas("mobile_number"),
@@ -178,8 +191,9 @@ module.exports = {
     notBefore1030,
     asyncErrorBoundary(create),
   ],
+  read: [asyncErrorBoundary(reservationExists), read],
   update: [
-    logReqData,
+    hasDataProp,
     bodyDataHas("first_name"),
     bodyDataHas("last_name"),
     bodyDataHas("mobile_number"),
