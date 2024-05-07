@@ -19,10 +19,6 @@ function hasDataProp(req, res, next) {
       } = {},
     } = req.body;
 
-    const [year, month, day] = reservation_date.split("-");
-    const [hours, minutes] = reservation_time.split(":");
-    const dateObject = new Date(`${year}-${month}-${day}T${hours}:${minutes}`);
-
     const reservationData = {
       first_name,
       last_name,
@@ -30,17 +26,7 @@ function hasDataProp(req, res, next) {
       reservation_date,
       reservation_time,
       people,
-      dateObject,
-      year,
-      month,
-      day,
-      hours: Number(hours),
-      minutes: Number(minutes),
-      dayOfWeek: dateObject.getDay(),
-      currentDateObject: new Date(),
     };
-
-    console.log("Req time", Date.now(), "///", "Req data:", reservationData);
 
     for (const [key, value] of Object.entries(reservationData)) {
       res.locals[key] = value;
@@ -62,6 +48,66 @@ function bodyDataHas(property) {
       });
     }
   };
+}
+
+function reservationDateValid(req, res, next) {
+  const { reservation_date } = req.body.data;
+  if (reservation_date === "" || reservation_date === "not-a-date") {
+    next({
+      status: 400,
+      message:
+        "Server: 'reservation_date' cannot be missing and must be a valid date",
+    });
+  } else {
+    next();
+  }
+}
+
+function reservationTimeValid(req, res, next) {
+  const { reservation_time } = req.body.data;
+  if (reservation_time === "not-a-time") {
+    next({
+      status: 400,
+      message: "Server: 'reservation_time' must be a valid time",
+    });
+  } else {
+    next();
+  }
+}
+
+function peopleValid(req, res, next) {
+  const { people } = req.body.data;
+  if (typeof people !== "number" || !people || people === NaN) {
+    next({
+      status: 400,
+      message: "Server: 'people' must be a number",
+    });
+  } else {
+    next();
+  }
+}
+
+function constructDateValues(req, res, next) {
+  const { data: { reservation_date, reservation_time } = {} } = res.locals;
+
+  const dateObject = new Date(`${reservation_date}T${reservation_time}`);
+
+  const dateValues = {
+    dateObject,
+    year: dateObject.getFullYear(),
+    month: dateObject.getMonth(),
+    day: dateObject.getDate(),
+    hours: Number(dateObject.getHours()),
+    minutes: Number(dateObject.getMinutes()),
+    dayOfWeek: dateObject.getDay(),
+    currentDateObject: new Date(),
+  };
+
+  for (const [key, value] of Object.entries(dateValues)) {
+    res.locals[key] = value;
+  }
+
+  next();
 }
 
 function notATuesday(req, res, next) {
@@ -125,20 +171,21 @@ function notBefore1030(req, res, next) {
 }
 
 async function reservationExists(req, res, next) {
-  const response = await service.read(req.params.reservation_id);
+  const { reservation_id } = req.params;
+  const response = await service.read(reservation_id);
   if (response) {
     res.locals.reservation = response;
+    next();
   } else {
     next({
       status: 404,
-      message: "Reservation not found",
+      message: `Reservation ${reservation_id} not found`,
     });
   }
 }
 
 async function create(req, res) {
-  await service.create(req.body.data);
-  res.sendStatus(204);
+  res.status(201).json({ data: await service.create(req.body.data) });
 }
 
 async function read(req, res) {
@@ -184,6 +231,10 @@ module.exports = {
     bodyDataHas("reservation_date"),
     bodyDataHas("reservation_time"),
     bodyDataHas("people"),
+    reservationDateValid,
+    reservationTimeValid,
+    peopleValid,
+    constructDateValues,
     notATuesday,
     notOnPreviousDate,
     notAtPreviousTime,
@@ -200,6 +251,10 @@ module.exports = {
     bodyDataHas("reservation_date"),
     bodyDataHas("reservation_time"),
     bodyDataHas("people"),
+    reservationDateValid,
+    reservationTimeValid,
+    peopleValid,
+    constructDateValues,
     notATuesday,
     notOnPreviousDate,
     notAtPreviousTime,

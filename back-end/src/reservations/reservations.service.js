@@ -2,8 +2,8 @@ const knex = require("../db/connection");
 
 function create(reservation) {
   return knex("reservations")
-    .insert(reservation, ["reservation_id"])
-    .then(([id]) => id);
+    .insert(reservation, ["*"])
+    .then((items) => items[0]);
 }
 
 function read(reservation_id) {
