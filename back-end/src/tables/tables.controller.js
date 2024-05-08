@@ -2,33 +2,27 @@ const service = require("./tables.service");
 const reservationsService = require("../reservations/reservations.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 
-const uiPropertyNames = {
-  table_name: "Table Name",
-  capacity: "Table Capacity",
-};
-
-// Validation middleware
-function logReqData(req, res, next) {
-  console.log("Req timestamp", Date.now());
-  const { data = {} } = req.body;
-
-  for (const [key, value] of Object.entries(data)) {
-    res.locals[key] = value;
-    console.log(key, typeof value, value);
+function hasDataProp(req, res, next) {
+  if (req.body.data) {
+    next();
+  } else {
+    next({
+      status: 400,
+      message: `Server: POST requests must include 'data' property`,
+    });
   }
-
-  next();
 }
 
-function bodyDataHas(property) {
+function bodyDataHas(propertyName) {
   return function (req, res, next) {
     const { data = {} } = req.body;
-    if (data[property]) {
+    if (data[propertyName]) {
+      res.locals[propertyName] = data[propertyName];
       next();
     } else {
       next({
         status: 400,
-        message: `Server: Tables must include ${uiPropertyNames[property]}`,
+        message: `Server: Tables must include '${propertyName}' field`,
       });
     }
   };
@@ -49,7 +43,6 @@ function nameValid(req, res, next) {
 
 function capacityValid(req, res, next) {
   const { capacity } = res.locals;
-  console.log(Number(capacity));
   if (Number.isNaN(Number(capacity))) {
     next({
       status: 400,
@@ -66,9 +59,9 @@ function capacityValid(req, res, next) {
 }
 
 async function tableAvailable(req, res, next) {
-  const table = await service.read(req.params.tableId);
+  const table = await service.read(req.params.table_id);
   if (!table.reservation_id) {
-    res.locals.tableId = req.params.tableId;
+    res.locals.table_id = req.params.table_id;
     next();
   } else {
     next({
@@ -82,7 +75,7 @@ async function sufficientTableCapacity(req, res, next) {
   const { people } = await reservationsService.read(
     req.body.data.reservation_id
   );
-  const { capacity } = await service.read(res.locals.tableId);
+  const { capacity } = await service.read(res.locals.table_id);
   if (people > capacity) {
     next({
       status: 400,
@@ -95,10 +88,10 @@ async function sufficientTableCapacity(req, res, next) {
 }
 
 async function tableOccupied(req, res, next) {
-  const table = await service.read(req.params.tableId);
+  const table = await service.read(req.params.table_id);
   if (table.reservation_id) {
     res.locals.reservation_id = table.reservation_id;
-    res.locals.table_id = req.params.tableId;
+    res.locals.table_id = req.params.table_id;
     next();
   } else {
     next({
@@ -117,9 +110,9 @@ async function create(req, res) {
 }
 
 async function update(req, res) {
-  const { tableId, reservation_id } = res.locals;
+  const { table_id, reservation_id } = res.locals;
   res.json({
-    data: await service.update(tableId, reservation_id),
+    data: await service.update(table_id, reservation_id),
   });
 }
 
@@ -140,7 +133,7 @@ async function list(req, res) {
 
 module.exports = {
   create: [
-    logReqData,
+    hasDataProp,
     bodyDataHas("table_name"),
     bodyDataHas("capacity"),
     nameValid,

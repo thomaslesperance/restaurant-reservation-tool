@@ -2,56 +2,33 @@ const service = require("./reservations.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 
 function hasDataProp(req, res, next) {
-  if (!req.body.data) {
+  if (req.body.data) {
+    next();
+  } else {
     next({
       status: 400,
-      message: `Server: requests must include 'data' property`,
+      message: `Server: POST requests must include 'data' property`,
     });
-  } else {
-    const {
-      data: {
-        first_name,
-        last_name,
-        mobile_number,
-        reservation_date,
-        reservation_time,
-        people,
-      } = {},
-    } = req.body;
-
-    const reservationData = {
-      first_name,
-      last_name,
-      mobile_number,
-      reservation_date,
-      reservation_time,
-      people,
-    };
-
-    for (const [key, value] of Object.entries(reservationData)) {
-      res.locals[key] = value;
-    }
-
-    next();
   }
 }
 
-function bodyDataHas(property) {
+function bodyDataHas(propertyName) {
   return function (req, res, next) {
     const { data = {} } = req.body;
-    if (data[property]) {
+    if (data[propertyName]) {
+      res.locals[propertyName] = data[propertyName];
       next();
     } else {
       next({
         status: 400,
-        message: `Server: Reservations must include '${property}' field`,
+        message: `Server: Reservations must include '${propertyName}' field`,
       });
     }
   };
 }
 
 function reservationDateValid(req, res, next) {
-  const { reservation_date } = req.body.data;
+  const { reservation_date } = res.locals;
   if (reservation_date === "" || reservation_date === "not-a-date") {
     next({
       status: 400,
@@ -64,7 +41,7 @@ function reservationDateValid(req, res, next) {
 }
 
 function reservationTimeValid(req, res, next) {
-  const { reservation_time } = req.body.data;
+  const { reservation_time } = res.locals;
   if (reservation_time === "not-a-time") {
     next({
       status: 400,
@@ -76,7 +53,7 @@ function reservationTimeValid(req, res, next) {
 }
 
 function peopleValid(req, res, next) {
-  const { people } = req.body.data;
+  const { people } = res.locals;
   if (typeof people !== "number" || !people || people === NaN) {
     next({
       status: 400,
@@ -88,7 +65,7 @@ function peopleValid(req, res, next) {
 }
 
 function constructDateValues(req, res, next) {
-  const { data: { reservation_date, reservation_time } = {} } = res.locals;
+  const { reservation_date, reservation_time } = res.locals;
 
   const dateObject = new Date(`${reservation_date}T${reservation_time}`);
 
@@ -114,7 +91,8 @@ function notATuesday(req, res, next) {
   if (res.locals.dayOfWeek === 2) {
     next({
       status: 400,
-      message: "Server: Reservations cannot be made on a Tuesday",
+      message:
+        "Server: Restaurant closed on Tuesday; reservations cannot be made on a Tuesday",
     });
   } else {
     next();
@@ -126,7 +104,7 @@ function notOnPreviousDate(req, res, next) {
   if (day - currentDateObject.getDate() < 0) {
     next({
       status: 400,
-      message: "Server: Reservations cannot be made for a previous date",
+      message: "Server: Reservations must be made for a future date and time",
     });
   } else {
     next();
@@ -173,6 +151,7 @@ function notBefore1030(req, res, next) {
 async function reservationExists(req, res, next) {
   const { reservation_id } = req.params;
   const response = await service.read(reservation_id);
+  // response will be undefined if reservation_id does not exist
   if (response) {
     res.locals.reservation = response;
     next();
