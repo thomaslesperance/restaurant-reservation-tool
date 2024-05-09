@@ -2,8 +2,8 @@ const knex = require("../db/connection");
 
 function create(table) {
   return knex("tables")
-    .insert(table, ["table_id"])
-    .then(([id]) => id);
+    .insert(table, ["*"])
+    .then((items) => items[0]);
 }
 
 function read(table_id) {

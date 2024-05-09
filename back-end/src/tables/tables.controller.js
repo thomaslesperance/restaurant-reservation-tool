@@ -30,11 +30,10 @@ function bodyDataHas(propertyName) {
 
 function nameValid(req, res, next) {
   const { table_name } = res.locals;
-
   if (table_name.length < 2) {
     next({
       status: 400,
-      message: `Server: Table name must be at least 2 characters`,
+      message: `Server: table_name must be at least 2 characters`,
     });
   } else {
     next();
@@ -43,7 +42,8 @@ function nameValid(req, res, next) {
 
 function capacityValid(req, res, next) {
   const { capacity } = res.locals;
-  if (Number.isNaN(Number(capacity))) {
+
+  if (typeof capacity !== "number") {
     next({
       status: 400,
       message: `Server: Table capacity must be a number`,
@@ -66,17 +66,23 @@ async function tableAvailable(req, res, next) {
   } else {
     next({
       status: 400,
-      message: "Server: Table must be 'Free'",
+      message: "Server: Table 'occupied'",
     });
   }
 }
 
 async function sufficientTableCapacity(req, res, next) {
-  const { people } = await reservationsService.read(
+  const reservation = await reservationsService.read(
     req.body.data.reservation_id
   );
+
   const { capacity } = await service.read(res.locals.table_id);
-  if (people > capacity) {
+  if (!reservation) {
+    next({
+      status: 404,
+      message: `Server: reservation ${req.body.data.reservation_id} does not exist`,
+    });
+  } else if (reservation.people > capacity) {
     next({
       status: 400,
       message: "Server: Insufficient table capacity",
@@ -105,8 +111,7 @@ async function tableOccupied(req, res, next) {
 
 // CRUDL functions
 async function create(req, res) {
-  await service.create(req.body.data);
-  res.sendStatus(204);
+  res.status(201).json({ data: await service.create(req.body.data) });
 }
 
 async function update(req, res) {
@@ -141,6 +146,8 @@ module.exports = {
     asyncErrorBoundary(create),
   ],
   update: [
+    hasDataProp,
+    bodyDataHas("reservation_id"),
     asyncErrorBoundary(tableAvailable),
     asyncErrorBoundary(sufficientTableCapacity),
     asyncErrorBoundary(update),
