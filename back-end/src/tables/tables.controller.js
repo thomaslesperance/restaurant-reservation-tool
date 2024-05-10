@@ -95,14 +95,19 @@ async function sufficientTableCapacity(req, res, next) {
 
 async function tableOccupied(req, res, next) {
   const table = await service.read(req.params.table_id);
-  if (table.reservation_id) {
+  if (!table) {
+    next({
+      status: 404,
+      message: `Server: table_id ${req.params.table_id} does not exist`,
+    });
+  } else if (table.reservation_id) {
     res.locals.reservation_id = table.reservation_id;
     res.locals.table_id = req.params.table_id;
     next();
   } else {
     next({
       status: 400,
-      message: "Server: Only 'Occupied' tables can be finished",
+      message: "Server: Table not occupied",
     });
   }
 }
@@ -125,7 +130,7 @@ async function destroy(req, res) {
   const { reservation_id, table_id } = res.locals;
   const result = await service.destroy(reservation_id, table_id);
   console.log(result);
-  res.status(204).json(result);
+  res.json(result);
 }
 
 async function list(req, res) {
