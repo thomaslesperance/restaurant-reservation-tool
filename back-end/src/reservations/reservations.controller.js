@@ -1,6 +1,7 @@
 const service = require("./reservations.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 
+// Middleware
 function hasDataProp(req, res, next) {
   if (req.body.data) {
     next();
@@ -8,6 +9,23 @@ function hasDataProp(req, res, next) {
     next({
       status: 400,
       message: `Server: POST requests must include 'data' property`,
+    });
+  }
+}
+
+function checkStatus(req, res, next) {
+  const { status } = req.body.data;
+  if (!status || status === "booked") {
+    next();
+  } else if (status === "seated" || status === "finished") {
+    next({
+      status: 400,
+      message: `Reservation status must not be 'seated' or 'finished'`,
+    });
+  } else {
+    next({
+      status: 400,
+      message: `Reservation status invalid`,
     });
   }
 }
@@ -99,17 +117,17 @@ function notATuesday(req, res, next) {
   }
 }
 
-function notOnPreviousDate(req, res, next) {
-  const { day, currentDateObject } = res.locals;
-  if (day - currentDateObject.getDate() < 0) {
-    next({
-      status: 400,
-      message: "Server: Reservations must be made for a future date and time",
-    });
-  } else {
-    next();
-  }
-}
+// function notOnPreviousDate(req, res, next) {
+//   const { day, currentDateObject } = res.locals;
+//   if (day - currentDateObject.getDate() < 0) {
+//     next({
+//       status: 400,
+//       message: "Server: Reservations must be made for a future date and time",
+//     });
+//   } else {
+//     next();
+//   }
+// }
 
 function notAtPreviousTime(req, res, next) {
   const { dateObject, currentDateObject } = res.locals;
@@ -117,7 +135,7 @@ function notAtPreviousTime(req, res, next) {
   if (dateObject - currentDateObject < 0) {
     next({
       status: 400,
-      message: "Server: Reservations cannot be made for a previous time",
+      message: "Server: Reservations must be made for a future date and time",
     });
   } else {
     next();
@@ -163,6 +181,26 @@ async function reservationExists(req, res, next) {
   }
 }
 
+function statusIsValid(req, res, next) {
+  const reservation = res.locals.reservation;
+  if (req.body.data.status === "unknown") {
+    next({
+      status: 400,
+      message: `Reservation status cannot be unknown`,
+    });
+  } else if (reservation.status === "finished") {
+    next({
+      status: 400,
+      message: `Status cannot be changed for finished reservations`,
+    });
+  } else {
+    next();
+  }
+}
+
+///////
+
+// CRUDL Operations
 async function create(req, res) {
   res.status(201).json({ data: await service.create(req.body.data) });
 }
@@ -204,6 +242,7 @@ async function list(req, res) {
 module.exports = {
   create: [
     hasDataProp,
+    checkStatus,
     bodyDataHas("first_name"),
     bodyDataHas("last_name"),
     bodyDataHas("mobile_number"),
@@ -215,7 +254,6 @@ module.exports = {
     peopleValid,
     constructDateValues,
     notATuesday,
-    notOnPreviousDate,
     notAtPreviousTime,
     notAfter930,
     notBefore1030,
@@ -235,12 +273,15 @@ module.exports = {
     peopleValid,
     constructDateValues,
     notATuesday,
-    notOnPreviousDate,
     notAtPreviousTime,
     notAfter930,
     notBefore1030,
     asyncErrorBoundary(update),
   ],
-  updateStatus: asyncErrorBoundary(updateStatus),
+  updateStatus: [
+    asyncErrorBoundary(reservationExists),
+    statusIsValid,
+    asyncErrorBoundary(updateStatus),
+  ],
   list: asyncErrorBoundary(list),
 };

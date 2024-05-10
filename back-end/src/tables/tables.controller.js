@@ -88,7 +88,20 @@ async function sufficientTableCapacity(req, res, next) {
       message: "Server: Insufficient table capacity",
     });
   } else {
+    res.locals.reservation = reservation;
     res.locals.reservation_id = req.body.data.reservation_id;
+    next();
+  }
+}
+
+function reservationNotSeated(req, res, next) {
+  const { status } = res.locals.reservation;
+  if (status === "seated") {
+    next({
+      status: 400,
+      message: "Server: Reservation already seated",
+    });
+  } else {
     next();
   }
 }
@@ -155,6 +168,7 @@ module.exports = {
     bodyDataHas("reservation_id"),
     asyncErrorBoundary(tableAvailable),
     asyncErrorBoundary(sufficientTableCapacity),
+    reservationNotSeated,
     asyncErrorBoundary(update),
   ],
   delete: [asyncErrorBoundary(tableOccupied), asyncErrorBoundary(destroy)],

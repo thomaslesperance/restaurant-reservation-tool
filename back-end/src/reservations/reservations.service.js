@@ -29,6 +29,7 @@ function updateStatus(reservation_id, status) {
 function list(date) {
   return knex("reservations")
     .where("reservation_date", date)
+    .whereNot({ status: "finished" })
     .orderBy("reservation_time")
     .select("*");
 }
