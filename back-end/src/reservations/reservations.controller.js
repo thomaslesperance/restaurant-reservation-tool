@@ -117,18 +117,6 @@ function notATuesday(req, res, next) {
   }
 }
 
-// function notOnPreviousDate(req, res, next) {
-//   const { day, currentDateObject } = res.locals;
-//   if (day - currentDateObject.getDate() < 0) {
-//     next({
-//       status: 400,
-//       message: "Server: Reservations must be made for a future date and time",
-//     });
-//   } else {
-//     next();
-//   }
-// }
-
 function notAtPreviousTime(req, res, next) {
   const { dateObject, currentDateObject } = res.locals;
 
@@ -276,6 +264,7 @@ module.exports = {
     notAtPreviousTime,
     notAfter930,
     notBefore1030,
+    asyncErrorBoundary(reservationExists),
     asyncErrorBoundary(update),
   ],
   updateStatus: [
