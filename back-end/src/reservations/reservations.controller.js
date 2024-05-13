@@ -72,11 +72,7 @@ function reservationTimeValid(req, res, next) {
 
 function peopleValid(req, res, next) {
   const { people } = res.locals;
-  if (
-    typeof Number(people) !== "number" ||
-    !Number(people) ||
-    Number(people) === NaN
-  ) {
+  if (typeof people !== "number") {
     next({
       status: 400,
       message: "Server: 'people' must be a number",

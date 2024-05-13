@@ -93,6 +93,7 @@ export async function listTables(signal, params) {
 
 export async function createReservation(params) {
   const url = new URL(`${API_BASE_URL}/reservations`);
+  params.people = Number(params.people);
   const jsonData = JSON.stringify({ data: params });
   return await fetchJson(url, { headers, method: "POST", body: jsonData }, []);
 }
