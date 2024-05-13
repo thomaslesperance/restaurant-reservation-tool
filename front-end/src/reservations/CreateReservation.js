@@ -7,6 +7,11 @@ import ErrorAlert from "../layout/ErrorAlert";
 import { createReservation } from "../utils/api";
 //
 
+//TO FIX:
+//-REFACTOR CODE TO USE SEPARATE FORM COMPONENT
+//-CORRECT DATA VALIDATION/CONSOLIDATE AND MIRROR BACKEND
+//-CHANGE INPUT TYPE FOR PEOPLE TO PRODUCE "NUMBER" TYPE DATE SENT TO BACKEND
+
 export default function CreateReservation() {
   const history = useHistory();
 
@@ -28,7 +33,7 @@ export default function CreateReservation() {
 
   function validateDate({ target }) {
     setClientDateError(null);
-    const dateObject = new Date(target.value.replaceAll("-", "/"));
+    const dateObject = new Date(target.value);
     const dateData = {
       dayOfWeek: dateObject.getDay(),
       currentDate: new Date().getDate(),
@@ -131,7 +136,7 @@ export default function CreateReservation() {
 
       <article className="card row m-1">
         <form className="card-body" onSubmit={handleSubmit}>
-          <label for="first_name" className="formLabel">
+          <label htmlFor="first_name" className="formLabel">
             <h5>First Name</h5>
           </label>
           <input
@@ -139,12 +144,12 @@ export default function CreateReservation() {
             className="form-control mb-2"
             id="first_name"
             name="first_name"
-            placeHolder="Jane"
+            placeholder="Jane"
             onChange={handleChange}
             value={formData.first_name}
           ></input>
 
-          <label for="last_name" className="formLabel">
+          <label htmlFor="last_name" className="formLabel">
             <h5>Last Name</h5>
           </label>
           <input
@@ -152,12 +157,12 @@ export default function CreateReservation() {
             className="form-control mb-2"
             id="last_name"
             name="last_name"
-            placeHolder="Doe"
+            placeholder="Doe"
             onChange={handleChange}
             value={formData.last_name}
           ></input>
 
-          <label for="mobile_number" className="formLabel">
+          <label htmlFor="mobile_number" className="formLabel">
             <h5>Mobile Number</h5>
           </label>
           <input
@@ -165,12 +170,12 @@ export default function CreateReservation() {
             className="form-control mb-2"
             id="mobile_number"
             name="mobile_number"
-            placeHolder="(XXX) XXX-XXXX"
+            placeholder="(XXX) XXX-XXXX"
             onChange={handleChange}
             value={formData.mobile_number}
           ></input>
 
-          <label for="reservation_date" className="formLabel">
+          <label htmlFor="reservation_date" className="formLabel">
             <h5>Reservation Date</h5>
           </label>
 
@@ -179,7 +184,7 @@ export default function CreateReservation() {
             className="form-control mb-2"
             id="reservation_date"
             name="reservation_date"
-            placeHolder="YYYY-MM-DD"
+            placeholder="YYYY-MM-DD"
             pattern="\d{4}-\d{2}-\d{2}"
             onInput={validateDate}
             onChange={handleChange}
@@ -188,7 +193,7 @@ export default function CreateReservation() {
 
           <ErrorAlert error={clientDateError} />
 
-          <label for="reservation_time" className="formLabel">
+          <label htmlFor="reservation_time" className="formLabel">
             <h5>Reservation Time</h5>
           </label>
           <input
@@ -196,7 +201,7 @@ export default function CreateReservation() {
             className="form-control mb-2"
             id="reservation_time"
             name="reservation_time"
-            placeHolder="HH:MM"
+            placeholder="HH:MM"
             pattern="[0-9]{2}:[0-9]{2}"
             onInput={validateTime}
             onChange={handleChange}
@@ -205,7 +210,7 @@ export default function CreateReservation() {
 
           <ErrorAlert error={clientTimeError} />
 
-          <label for="people" className="formLabel">
+          <label htmlFor="people" className="formLabel">
             <h5>Party Size</h5>
           </label>
           <input
@@ -213,7 +218,7 @@ export default function CreateReservation() {
             className="form-control mb-2"
             id="people"
             name="people"
-            placeHolder="XX"
+            placeholder="XX"
             onChange={handleChange}
             value={formData.people}
           ></input>

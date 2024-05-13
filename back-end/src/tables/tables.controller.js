@@ -142,7 +142,6 @@ async function update(req, res) {
 async function destroy(req, res) {
   const { reservation_id, table_id } = res.locals;
   const result = await service.destroy(reservation_id, table_id);
-  console.log(result);
   res.json(result);
 }
 
