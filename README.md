@@ -41,7 +41,7 @@ For local instances of PostgreSQL, the following database URL formatting convent
 
 ### API
 
-To support the above client features, the api provides several basic CRUD functions at the following endpoints:
+To support these client features, the API exposes several basic CRUD endpoints:
 
 #### GET ./reservations
 
@@ -60,3 +60,23 @@ To support the above client features, the api provides several basic CRUD functi
 #### PUT ./tables/:table_id/seat
 
 #### DELETE ./tables/:table_id/seat
+
+## Tools and Technology
+
+--  JavaScript (Node 16.20.2)
+
+--  Express
+
+--  Knex
+
+--  PostgreSQL
+
+--  Knex
+
+--  React
+
+--  React Router
+
+## Conclusion
+
+Future plans for this project include incorporating elements of the frontend routing schema, API endpoint schema, and React component tree structure for other more sophisticated projects.
