@@ -36,12 +36,27 @@ For local instances of PostgreSQL, the following database URL formatting convent
 #### Create a new table
 ![6](https://github.com/thomaslesperance/restaurant-reservation-tool/assets/144936700/d6985868-9d2f-4d53-9f96-d270fc787a40)
 
-#### Seat a reservation at an existing available table
+#### Seat a reservation at an available table
 ![4](https://github.com/thomaslesperance/restaurant-reservation-tool/assets/144936700/dabed510-2cee-4930-bda2-c77b9dd61054)
 
 ### API
 
 To support the above client features, the api provides several basic CRUD functions at the following endpoints:
 
+#### GET ./reservations
 
+#### POST ./reservations
 
+#### GET ./reservations/:reservation_id
+
+#### PUT ./reservations/:reservation_id
+
+#### PUT ./reservations/:reservation_id/status
+
+#### GET ./tables
+
+#### POST ./tables
+
+#### PUT ./tables/:table_id/seat
+
+#### DELETE ./tables/:table_id/seat
