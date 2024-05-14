@@ -1,7 +1,7 @@
 # Restaurant Reservation Tool
 
 ## Context
-The restaurant-reservation-tool is a simple full-stack application using a Node/React/Express/PostgreSQL (NERP?) tech stack. It simulates a tool that would be used by hosting staff at a restaurant to create, cancel, search, and modify reservations to a restaurant.
+The Restaurant Reservation Tool ("Periodic Tables") is a simple full stack application using a Node/React/Express/PostgreSQL tech stack. It simulates a tool that would be used by hosting staff at a restaurant to create, cancel, search, and modify reservations to a restaurant.
 
 The app is deployed here: https://restaurant-reservation-tool-frontend.onrender.com/
 
