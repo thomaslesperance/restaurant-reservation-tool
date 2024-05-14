@@ -71,8 +71,6 @@ To support these client features, the API exposes several basic CRUD endpoints:
 
 --  PostgreSQL
 
---  Knex
-
 --  React
 
 --  React Router
