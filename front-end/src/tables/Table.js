@@ -1,9 +1,12 @@
 import React from "react";
+import { useHistory } from "react-router-dom";
 //
 import { finishTable } from "../utils/api";
 //
 
 export default function Table({ table, setTablesError }) {
+  const history = useHistory();
+
   function handleClick() {
     if (
       window.confirm(
@@ -11,7 +14,7 @@ export default function Table({ table, setTablesError }) {
       )
     ) {
       finishTable({ reservation_id: table.reservation_id }, table.table_id)
-        .then(window.location.reload())
+        .then(history.push("/dashboard"))
         .catch(setTablesError);
     } else {
       return;
@@ -23,7 +26,7 @@ export default function Table({ table, setTablesError }) {
       <div className="card-header row m-0 py-1 px-0">
         <div className="col-md">
           <h5>{table.table_name}</h5>
-          <h6 dtable-table-id-status={`${table.table_id}`}>
+          <h6 data-table-id-status={`${table.table_id}`}>
             {table.reservation_id ? "Occupied" : "Free"}
           </h6>
         </div>

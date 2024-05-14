@@ -15,7 +15,7 @@ function read(table_id) {
 function update(table_id, reservation_id) {
   return knex
     .transaction((trx) => {
-      knex("reservations")
+      return knex("reservations")
         .where({ reservation_id })
         .update({ status: "seated" })
         .transacting(trx)
@@ -37,7 +37,7 @@ function update(table_id, reservation_id) {
 function destroy(reservation_id, table_id) {
   return knex
     .transaction((trx) => {
-      knex("tables")
+      return knex("tables")
         .where({ table_id })
         .update({ reservation_id: null })
         .transacting(trx)
