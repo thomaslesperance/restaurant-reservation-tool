@@ -10,47 +10,36 @@ import { createTable } from "../utils/api";
 export default function CreateTable() {
   const history = useHistory();
 
-  const initialFormData = {
-    table_name: "",
-    capacity: "",
-  };
-  const [formData, setFormData] = useState({ ...initialFormData });
+  const [formData, setFormData] = useState({ table_name: "", capacity: "" });
   const [apiError, setApiError] = useState(null);
-  const [clientNameError, setClientNameError] = useState(null);
-  const [clientCapacityError, setClientCapacityError] = useState(null);
+  const [formError, setFormError] = useState(null);
 
-  // Client-side name validation
-  const nameError = new Error();
-
-  function validateName({ target }) {
-    setClientNameError(null);
-    const tableName = target.value;
-    if (tableName.length < 2) {
-      nameError.message = "Table name must be at least 2 characters";
+  // Form data validation funcitons
+  function validateName(formFields, errorMessages) {
+    if (formFields.table_name.length < 2) {
+      errorMessages.push("Table name must be at least 2 characters");
     }
-    if (nameError.message) {
-      setClientNameError(nameError);
+  }
+
+  function validateCapacity(formFields, errorMessages) {
+    if (Number(formFields.capacity) < 1) {
+      errorMessages.push("Tables must seat at least 1 person");
     }
   }
   /////////////////////////////
 
-  // Client-side capacity validation
-  const capacityError = new Error();
+  // Handlers and data validation sequence
 
-  function validateCapacity({ target }) {
-    setClientCapacityError(null);
-    const capacityInput = target.value;
-    if (Number.isNaN(Number(capacityInput))) {
-      capacityError.message = "Table capacity must be a number";
-    }
-    if (Number(capacityInput) < 1) {
-      capacityError.message = "Tables must seat at least 1 person";
-    }
-    if (capacityError.message) {
-      setClientCapacityError(capacityError);
+  function validateInputs(formFields) {
+    const errorMessages = [];
+
+    validateName(formFields, errorMessages);
+    validateCapacity(formFields, errorMessages);
+
+    if (errorMessages.length) {
+      setFormError(new Error(errorMessages.join(" / ")));
     }
   }
-  /////////////////////////////
 
   function handleChange({ target }) {
     setFormData({
@@ -62,11 +51,14 @@ export default function CreateTable() {
   async function handleSubmit(event) {
     event.preventDefault();
     setApiError(null);
-    try {
-      await createTable(formData);
-      history.push("/dashboard");
-    } catch (error) {
-      setApiError(error);
+    validateInputs(formData);
+    if (!formError) {
+      try {
+        await createTable(formData);
+        history.push("/dashboard");
+      } catch (error) {
+        setApiError(error);
+      }
     }
   }
 
@@ -75,6 +67,7 @@ export default function CreateTable() {
       <Header headerTitle={"Seat Reservation"} />
 
       <article className="card row m-1">
+        <ErrorAlert error={formError} />
         <form className="card-body" onSubmit={handleSubmit}>
           <label htmlFor="table_name" className="formLabel">
             <h5>Table Name</h5>
@@ -85,12 +78,9 @@ export default function CreateTable() {
             id="table_name"
             name="table_name"
             placeholder="Bar 1"
-            onInput={validateName}
             onChange={handleChange}
             value={formData.table_name}
           ></input>
-
-          <ErrorAlert error={clientNameError} />
 
           <label htmlFor="capacity" className="formLabel">
             <h5>Table Capacity</h5>
@@ -103,12 +93,9 @@ export default function CreateTable() {
             placeholder="4"
             min="1"
             max="99"
-            onInput={validateCapacity}
             onChange={handleChange}
             value={formData.capacity}
           ></input>
-
-          <ErrorAlert error={clientCapacityError} />
 
           <button type="submit" className="btn btn-primary mr-1">
             Submit

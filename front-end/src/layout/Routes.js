@@ -10,6 +10,9 @@ import Search from "../search/Search";
 import NotFound from "./NotFound";
 //
 
+//TEST SUITES FAILING
+//5, 6, 8
+
 export default function Routes() {
   return (
     <Switch>

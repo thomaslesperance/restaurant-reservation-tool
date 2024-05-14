@@ -106,6 +106,7 @@ export async function createReservation(params) {
 
 export async function createTable(params) {
   const url = new URL(`${API_BASE_URL}/tables`);
+  params.capacity = Number(params.capacity);
   const jsonData = JSON.stringify({ data: params });
   return await fetchJson(url, { headers, method: "POST", body: jsonData }, []);
 }
@@ -175,6 +176,7 @@ export async function updateReservationStatus(params, reservation_id) {
 
 export async function updateReservation(params, reservation_id) {
   const url = new URL(`${API_BASE_URL}/reservations/${reservation_id}`);
+  params.people = Number(params.people);
   const jsonData = JSON.stringify({ data: params });
   return await fetchJson(url, { headers, method: "PUT", body: jsonData }, []);
 }
