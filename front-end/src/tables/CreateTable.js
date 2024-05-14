@@ -64,7 +64,7 @@ export default function CreateTable() {
 
   return (
     <main>
-      <Header headerTitle={"Seat Reservation"} />
+      <Header headerTitle={"New Table"} />
 
       <article className="card row m-1">
         <ErrorAlert error={formError} />
