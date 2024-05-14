@@ -14,7 +14,7 @@ export default function Reservation({ data }) {
       )
     ) {
       updateReservationStatus({ status: "cancelled" }, data.reservation_id)
-        .then(window.location.reload())
+        .then(() => window.location.reload())
         .catch(console.log);
     } else {
       return;
@@ -58,7 +58,6 @@ export default function Reservation({ data }) {
               <Link
                 to={`/reservations/${data.reservation_id}/edit`}
                 className="btn btn-secondary w-100 text-nowrap"
-                href={`/reservations/${data.reservation_id}/edit`}
               >
                 Edit
               </Link>

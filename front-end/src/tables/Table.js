@@ -1,12 +1,9 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
 //
 import { finishTable } from "../utils/api";
 //
 
 export default function Table({ table, setTablesError }) {
-  const history = useHistory();
-
   function handleClick() {
     if (
       window.confirm(
@@ -14,7 +11,7 @@ export default function Table({ table, setTablesError }) {
       )
     ) {
       finishTable({ reservation_id: table.reservation_id }, table.table_id)
-        .then(history.push("/dashboard"))
+        .then(() => window.location.reload())
         .catch(setTablesError);
     } else {
       return;
