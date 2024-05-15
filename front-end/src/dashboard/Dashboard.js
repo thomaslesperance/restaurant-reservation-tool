@@ -20,6 +20,8 @@ export default function Dashboard() {
   const [reservations, setReservations] = useState([]);
   const [tables, setTables] = useState([]);
   const [apiError, setApiError] = useState(null);
+  const [tablesUpdated, setTablesUpdated] = useState(false);
+  const [reservationsUpdated, setReservationsUpdated] = useState(false);
 
   //Calculate date for browsing reservations
   let date;
@@ -31,8 +33,8 @@ export default function Dashboard() {
     date = today();
   }
 
-  useEffect(loadTables, []); // tables = type Array
-  useEffect(loadReservations, [date]); // reservations = type Array
+  useEffect(loadTables, [tablesUpdated]); // tables = type Array
+  useEffect(loadReservations, [date, reservationsUpdated]); // reservations = type Array
 
   function loadTables() {
     setIsLoading(true);
@@ -75,9 +77,12 @@ export default function Dashboard() {
     <main>
       <Header headerTitle={"Dashboard"} />
       <ErrorAlert error={apiError} />
-      <TableDisplay tables={tables} />
+      <TableDisplay tables={tables} setTablesUpdated={setTablesUpdated} />
       <DatePaginator date={date} />
-      <ReservationsDisplay reservations={reservations} />
+      <ReservationsDisplay
+        reservations={reservations}
+        setReservationsUpdated={setReservationsUpdated}
+      />
     </main>
   );
 }

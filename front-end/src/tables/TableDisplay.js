@@ -4,7 +4,7 @@ import Table from "./Table";
 import ErrorAlert from "../layout/ErrorAlert";
 //
 
-export default function TableDisplay({ tables }) {
+export default function TableDisplay({ tables, setTablesUpdated }) {
   const [tablesError, setTablesError] = useState(null);
 
   const tableArray = tables.map((table) => {
@@ -13,6 +13,7 @@ export default function TableDisplay({ tables }) {
         key={table.table_id}
         table={table}
         setTablesError={setTablesError}
+        setTablesUpdated={setTablesUpdated}
       />
     );
   });

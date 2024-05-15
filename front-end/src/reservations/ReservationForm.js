@@ -140,11 +140,13 @@ export default function ReservationForm({ handleSubmit, initialFormData }) {
             <h5>Mobile Number</h5>
           </label>
           <input
-            type="text"
+            type="number"
             className="form-control mb-2"
             id="mobile_number"
             name="mobile_number"
-            placeholder="(XXX) XXX-XXXX"
+            min="1000000000"
+            max="9999999999"
+            placeholder="8001239876"
             onChange={handleChange}
             value={formData.mobile_number}
           ></input>

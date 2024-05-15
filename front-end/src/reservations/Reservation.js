@@ -1,11 +1,16 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useHistory } from "react-router-dom";
 //
 import { updateReservationStatus } from "../utils/api";
 //
 
-export default function Reservation({ data }) {
+export default function Reservation({
+  data,
+  setReservationsError,
+  setReservationsUpdated,
+}) {
   const { pathname } = useLocation(); //produces string of pathname without query params
+  const history = useHistory();
 
   function handleCancel() {
     if (
@@ -14,8 +19,13 @@ export default function Reservation({ data }) {
       )
     ) {
       updateReservationStatus({ status: "cancelled" }, data.reservation_id)
-        .then(() => window.location.reload())
-        .catch(console.log);
+        .then(() => {
+          setReservationsUpdated(
+            (prevReservationsUpdated) => !prevReservationsUpdated
+          );
+          history.push(`/dashboard?date=${data.reservation_date}`);
+        })
+        .catch(setReservationsError);
     } else {
       return;
     }

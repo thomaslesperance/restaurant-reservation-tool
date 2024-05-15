@@ -1,13 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 //
 import Reservation from "./Reservation";
+import ErrorAlert from "../layout/ErrorAlert";
 //
 
-export default function ReservationsDisplay({ reservations }) {
+export default function ReservationsDisplay({
+  reservations,
+  setReservationsUpdated,
+}) {
+  const [reservationsError, setReservationsError] = useState(null);
+
   const reservationArray = reservations.reduce((accumulator, reservation) => {
     if (reservation.status !== "finished") {
       const component = (
-        <Reservation key={reservation.reservation_id} data={reservation} />
+        <Reservation
+          key={reservation.reservation_id}
+          data={reservation}
+          setReservationsError={setReservationsError}
+          setReservationsUpdated={setReservationsUpdated}
+        />
       );
       accumulator.push(component);
       return accumulator;
@@ -24,5 +35,10 @@ export default function ReservationsDisplay({ reservations }) {
     </div>
   );
 
-  return <>{reservationComponents}</>;
+  return (
+    <>
+      <ErrorAlert error={reservationsError} />
+      <div>{reservationComponents}</div>
+    </>
+  );
 }
