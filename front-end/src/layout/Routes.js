@@ -20,7 +20,7 @@ export default function Routes() {
         <Redirect to={"/dashboard"} />
       </Route>
 
-      <Route path="/dashboard">
+      <Route exact path="/dashboard">
         <Dashboard />
       </Route>
 
